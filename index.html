@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radionica kola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap&subset=cyrillic,latin-ext" rel="stylesheet">
+<style>
+:root{--bg:#0f1420;--panel:#171e2c;--panel2:#1d2637;--line:#2a3550;--txt:#e8edf6;--mut:#93a0b8;--acc:#ff7a33;--acc2:#2dd4bf;--bad:#ff5d5d;--warn:#ffc04d;--ok:#4ade80;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:Nunito,system-ui,sans-serif}
+button,select,input,textarea{font:inherit;color:inherit}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);background:#121a28;position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;margin-right:auto}
+.logo .bolt{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),#ffb35c);display:grid;place-items:center;font-size:19px;box-shadow:0 4px 14px rgba(255,122,51,.35)}
+.btn{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:.12s}
+.btn:hover:not(:disabled){border-color:#3e4c6d;background:#243049}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.small{padding:6px 10px;font-size:14px}
+.btn.ghost{background:transparent}
+.btn.on{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc);color:#ffd2b8}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#1b0d03}
+.btn.danger{border-color:#6b2a2a;color:#ffb0b0}
+select.btn{padding-right:8px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px}
+#simBtn{background:var(--acc);border:none;color:#1b0d03;font-size:19px;font-weight:900;padding:11px 26px;border-radius:14px;box-shadow:0 6px 20px rgba(255,122,51,.35)}
+#simBtn.running{background:var(--bad);color:#fff;box-shadow:0 6px 20px rgba(255,93,93,.35)}
+.modes{display:flex;border:2px solid var(--acc2);border-radius:999px;padding:3px;gap:2px}
+.modes button{border:none;background:none;border-radius:999px;padding:7px 14px;font-weight:800;cursor:pointer;color:var(--mut)}
+.modes button.on{background:var(--acc2);color:#05221d}
+#lightBox{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 12px;font-weight:700}
+#lightBox[hidden]{display:none}
+#banner{margin:0 16px;padding:12px 16px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--acc);display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between}
+.bt{font-weight:900;font-size:18px}.bs{color:var(--mut);font-family:'JetBrains Mono',monospace;font-size:13px}
+.donechip{font-size:13px;background:rgba(74,222,128,.15);color:var(--ok);padding:2px 8px;border-radius:999px;margin-left:6px}
+main{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;gap:14px;padding:14px 16px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+#left{display:flex;flex-direction:column;gap:14px;position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto}
+.cat{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:10px 2px 6px}
+.cat:first-child{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.pal{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:76px}
+.pal:hover{border-color:#40507a}
+.pal.on{border-color:var(--acc);background:#2a2320;box-shadow:0 0 0 2px rgba(255,122,51,.35)}
+.pal.locked{opacity:.38}
+.pal .pl{font-size:12.5px;font-weight:700;text-align:center;line-height:1.15}
+.pal .info{position:absolute;top:4px;right:5px;width:17px;height:17px;border-radius:50%;background:#2e3a55;font-size:11px;font-weight:900;display:grid;place-items:center;font-style:italic;font-family:serif}
+.pal .lk{position:absolute;top:3px;left:5px;font-size:11px}
+.ico{width:54px;height:36px;display:block}
+h3 .ico,h2 .ico{width:46px;height:30px;display:inline-block;vertical-align:middle}
+#props h3{margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:4px}
+#props label{display:block;margin:10px 0;font-weight:700;font-size:14px}
+#props select,#props input[type=range]{display:block;width:100%;margin-top:5px}
+#props select{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px}
+.swatches{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.sw{width:28px;height:28px;border-radius:50%;border:2px solid #0006;cursor:pointer}
+.sw.on{outline:3px solid #fff;outline-offset:1px}
+.meas{display:flex;flex-direction:column;gap:3px;background:#0f1622;border-radius:10px;padding:8px 10px;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:13px}
+.muted{color:var(--mut)}.small{font-size:13px}.bad{color:var(--bad)}
+#center{min-width:0}
+.boardwrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px;overflow-x:auto}
+#board{display:block;width:100%;min-width:640px;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+#board .hole{fill:#4a4842}
+#board .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;fill:#8a8677;text-anchor:middle}
+#board .rv{font-family:'JetBrains Mono',monospace;font-size:9px;fill:#5b4a2a;text-anchor:middle;font-weight:700;paint-order:stroke;stroke:#efe9da;stroke-width:3px;pointer-events:none}
+#board .plus{font-size:12px;font-weight:900;fill:#e33;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:2.5px;pointer-events:none}
+#board .part{cursor:pointer}
+#board .part.act{cursor:grab}
+#board .hit{stroke:transparent;stroke-width:16;fill:none}
+#board .hov{fill:rgba(45,212,191,.25);stroke:var(--acc2);stroke-width:2;pointer-events:none}
+#board .hov2{fill:rgba(45,212,191,.18);pointer-events:none}
+#board .pend{fill:rgba(255,122,51,.35);stroke:var(--acc);stroke-width:2.5;pointer-events:none}
+#board .ghost{stroke:var(--acc);stroke-width:3;stroke-dasharray:6 5;pointer-events:none}
+#board #overlay{pointer-events:none}
+#board .flow{stroke:#fff9c4;stroke-width:2.2;fill:none;stroke-dasharray:3 11;stroke-linecap:round;animation:flow 1s linear infinite;pointer-events:none;opacity:.95}
+@keyframes flow{to{stroke-dashoffset:-14}}
+.spin{animation:spin 1s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+.waves{animation:pulse .25s ease-in-out infinite alternate}
+@keyframes pulse{from{opacity:.3}to{opacity:1}}
+.smoke{animation:smoke 1.6s ease-out infinite}
+@keyframes smoke{from{transform:translateY(0);opacity:.6}to{transform:translateY(-12px);opacity:0}}
+#status{min-height:24px;margin:8px 4px 0;font-weight:700;font-size:15px;color:var(--mut)}
+#status.bad{color:var(--bad)}#status.warn{color:var(--warn)}#status.ok{color:var(--ok)}
+#right{position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto}
+#lesson h3{margin:0 0 6px;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+#lesson p{margin:6px 0;line-height:1.45}
+.steps{list-style:none;padding:0;margin:12px 0;display:flex;flex-direction:column;gap:12px}
+.steps li{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.stepn{flex:none;background:var(--acc);color:#1b0d03;font-weight:900;font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-radius:8px;padding:5px 8px;white-space:nowrap}
+.steps b,#lesson b{color:#ffb07c}
+.foot{border-top:1px solid var(--line);padding-top:10px;color:var(--mut)}
+.help{padding-left:18px;line-height:1.5;margin:6px 0}.help li{margin:6px 0}
+.newparts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.newparts span{display:flex;align-items:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:2px 10px 2px 2px;font-weight:700;font-size:13px}
+.newparts .ico{width:44px;height:30px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}.row.center{justify-content:center}
+#modal{position:fixed;inset:0;background:rgba(5,8,14,.72);display:grid;place-items:center;z-index:20;padding:16px}
+#modal[hidden]{display:none}
+.mbox{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;width:min(560px,100%);max-height:90vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.mbox.center{text-align:center}
+.mbox.center .newparts{justify-content:center}
+.mbox h2{margin:0 0 12px}
+.mbox .x{position:absolute;top:10px;right:10px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--mut)}
+.mbox label{display:block;font-weight:700;margin:14px 0 6px}
+.mbox textarea,.mbox input{width:100%;background:#0f1622;border:1px solid var(--line);border-radius:10px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.mbox input{font-family:Nunito;font-size:15px;flex:1;min-width:0;width:auto}
+.cel{font-size:64px;line-height:1}
+.big{font-size:18px;font-weight:800}
+.llist{display:flex;flex-direction:column;gap:6px}
+.lrow{display:flex;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 12px;cursor:pointer;text-align:left}
+.lrow:disabled{opacity:.45;cursor:default}
+.lrow.cur{border-color:var(--acc)}
+.ln{width:28px;height:28px;border-radius:8px;background:#2e3a55;display:grid;place-items:center;font-weight:900}
+.lname{flex:1;font-weight:700}
+.clist{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.crow{display:flex;align-items:center;gap:8px;background:var(--panel2);border-radius:10px;padding:6px 8px}
+.crow span{flex:1;font-weight:700;display:flex;flex-direction:column}.crow small{color:var(--mut);font-weight:500}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:#243049;border:1px solid var(--line);padding:12px 18px;border-radius:12px;font-weight:700;z-index:30;transition:.25s;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#toast.show{transform:translate(-50%,0)}
+#toast.bad{border-color:var(--bad)}#toast.warn{border-color:var(--warn)}#toast.ok{border-color:var(--ok)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden}
+#confetti i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 2s ease-in forwards}
+@keyframes fall{to{top:105vh;transform:rotate(720deg)}}
+footer{color:var(--mut);font-family:'JetBrains Mono',monospace;font-size:12px;padding:6px 16px 20px}
+@media (max-width:1180px){main{grid-template-columns:230px minmax(0,1fr)}#right{grid-column:1/-1;position:static;max-height:none}}
+@media (max-width:760px){header{position:static}#left,#right{position:static}main{grid-template-columns:1fr}#left{position:static;max-height:none;order:2}#center{order:1}#right{order:3}.grid{grid-template-columns:repeat(4,1fr)}.logo{font-size:17px}#simBtn{font-size:17px;padding:9px 18px}}
+@media (prefers-reduced-motion:reduce){.spin,.flow,.waves{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="bolt">⚡</span><span data-t="title"></span></div>
+  <select id="lang" class="btn" aria-label="Language"></select>
+  <button class="btn" id="helpBtn">❓ <span data-t="help"></span></button>
+  <button class="btn" id="soundBtn"></button>
+  <button class="btn" id="saveBtn">💾 <span data-t="myCircuits"></span></button>
+  <button class="btn" id="clearBtn">🗑 <span data-t="clear"></span></button>
+</header>
+<div class="toolbar">
+  <button class="btn" id="selBtn">➤ <span data-t="select"></span></button>
+  <button class="btn" id="undoBtn" data-tt="undo" aria-label="undo">↶</button>
+  <button class="btn" id="redoBtn" data-tt="redo" aria-label="redo">↷</button>
+  <button id="simBtn"></button>
+  <div class="modes"><button id="modeFree">🎮 <span data-t="free"></span></button><button id="modeLearn">🎓 <span data-t="learn"></span></button></div>
+  <label id="lightBox" hidden>☀ <span data-t="light"></span><input type="range" id="lightRange" min="0" max="100"><span id="lightVal"></span></label>
+</div>
+<div id="banner"></div>
+<main>
+  <aside id="left">
+    <div class="panel" id="palette"></div>
+    <div class="panel" id="props"></div>
+  </aside>
+  <section id="center">
+    <div class="boardwrap"><svg id="board" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div id="status"></div>
+  </section>
+  <aside id="right" class="panel"><div id="lesson"></div></aside>
+</main>
+<footer>⚡ SR · MK · RO · BG · EN</footer>
+<div id="modal" hidden></div>
+<div id="toast"></div>
+<div id="confetti"></div>
+<script>const I18N = {
+sr: {
+  name: 'Srpski', flag: '🇷🇸', html: 'sr-Latn',
+  ui: {
+    title: 'Radionica kola', subtitle: 'Sastavi kolo na protobordu i pritisni Simuliraj',
+    help: 'Pomoć', sound: 'Zvuk', save: 'Sačuvaj', myCircuits: 'Moja kola', clear: 'Očisti',
+    select: 'Izaberi', undo: 'Poništi', redo: 'Ponovi', simulate: 'Simuliraj', stop: 'Zaustavi',
+    free: 'Igraj slobodno', learn: 'Hajde da učimo', del: 'Obriši', level: 'Nivo', lessons: 'Lekcije',
+    step: 'Korak', showSolution: 'Pokaži rešenje', resetLesson: 'Počni ispočetka', light: 'Svetlo',
+    props: 'Svojstva', noSelection: 'Izaberi alat „Izaberi“ i klikni na deo da vidiš njegova svojstva.',
+    value: 'Otpor', color: 'Boja', position: 'Položaj klizača', state: 'Stanje', on: 'Uključen', off: 'Isključen',
+    pressed: 'Pritisnut', released: 'Pušten', burnedLabel: 'Pregoreo', current: 'Struja', voltage: 'Napon',
+    lessonFooter: 'Kada završiš, pritisni <b>Simuliraj</b>. Ako radi, nivo se završava i otključavaš nove delove 🔓.',
+    pickFirst: 'Klikni na rupicu gde počinje: {part}.', pickSecond: 'Sada klikni na drugu rupicu. (Esc = odustani)',
+    pickPot: 'Klikni na rupicu — potenciometar zauzima 3 susedne rupice u redu.',
+    occupied: 'Ta rupica je već zauzeta.', sameHole: 'Izaberi drugu rupicu.', potBad: 'Ovde nema mesta za potenciometar.',
+    locked: 'Ovaj deo se otključava u kasnijoj lekciji.',
+    short: '⚠ Kratak spoj! Plus je spojen direktno na minus i baterija se greje. Prekini taj spoj.',
+    burned: '💥 LED je pregoreo — teklo je previše struje. Obriši ga, stavi novi i dodaj otpornik.',
+    noPower: 'Kolo nije zatvoreno — struja nema kuda da teče. Da li si se vratio na − šinu?',
+    simOn: 'Simulacija radi. Pritiskaj tastere i prebacuj prekidače!',
+    saved: 'Sačuvano.', loaded: 'Učitano.', copied: 'Kôd je kopiran.', importBad: 'Ovaj kôd ne valja.',
+    lessonDone: 'Bravo! Nivo završen!', unlockedParts: 'Otključano:', nextLesson: 'Sledeća lekcija', stay: 'Ostani ovde',
+    allDone: 'Završio si sve lekcije! Sada probaj slobodnu igru.', solutionLoaded: 'Ovo je jedno rešenje. Pritisni Simuliraj!',
+    name: 'Ime kola', load: 'Otvori', exportCode: 'Kôd kola (pošalji ga drugaru)', copy: 'Kopiraj',
+    importLabel: 'Nalepi kôd kola', importBtn: 'Učitaj kôd', empty: 'Još nema sačuvanih kola.', close: 'Zatvori',
+    confirmClear: 'Obrisati sve delove sa protoborda?', yes: 'Da', no: 'Ne', done: 'završeno', defaultName: 'Moje kolo',
+    helpItems: [
+      'Izaberi deo sa leve strane, pa klikni na dve rupice protoborda da ga postaviš.',
+      'Rupice u istoj koloni (a–e, ili f–j) su spojene ispod. Dugačke šine + i − su spojene celom dužinom.',
+      'Baterija od 9 V je vezana za gornje šine: + (crvena) i − (plava). Donje šine spoji žicama ako ti trebaju.',
+      'Alatom <b>Izaberi</b> klikni na deo, pa ga obriši dugmetom <b>Obriši</b> ili tasterom Delete.',
+      'Pritisni <b>Simuliraj</b> da vidiš kako teče struja. Tokom simulacije možeš da pritiskaš tastere i prebacuješ prekidače.',
+      '↶ i ↷ poništavaju i vraćaju poteze.'
+    ]
+  },
+  cats: { power: 'Izvori i žice', passive: 'Pasivne', out: 'Izlazi', sw: 'Prekidači', sens: 'Senzori', tools: 'Alati' },
+  colors: { red: 'Crvena', green: 'Zelena', blue: 'Plava', yellow: 'Žuta', white: 'Bela', black: 'Crna', orange: 'Narandžasta' },
+  parts: { wire: 'Žica', resistor: 'Otpornik', led: 'LED', diode: 'Dioda', bulb: 'Sijalica', buzzer: 'Zujalica', motor: 'Motor', button: 'Taster', switch: 'Prekidač', pot: 'Potenciometar', ldr: 'Fotootpornik', ammeter: 'Ampermetar', voltmeter: 'Voltmetar', battery: 'Baterija 9 V' },
+  info: {
+    wire: 'Provodi struju između dve tačke. Klikni na prvu rupicu, pa na drugu.',
+    resistor: 'Ograničava struju. Bez njega LED pregori! Trake u boji pokazuju vrednost u omima (Ω).',
+    led: 'Svetleća dioda. Svetli samo kad struja ide u pravom smeru: duža nožica (+) ka plusu. Uvek joj treba otpornik.',
+    diode: 'Propušta struju samo u jednom smeru, kao jednosmerni ventil. Srebrna traka je strana minusa (−).',
+    bulb: 'Sijalica svetli kad kroz njenu nit teče struja. Što više struje, jače svetli.',
+    buzzer: 'Zujalica pišti kad kroz nju teče struja. Prvo klikni na stranu koja ide ka plusu (+).',
+    motor: 'Motor pretvara struju u okretanje. Kad zameniš + i −, okreće se na drugu stranu.',
+    button: 'Taster spaja kolo samo dok ga držiš pritisnutog. Tokom simulacije pritisni ga mišem ili prstom.',
+    switch: 'Prekidač pamti položaj: uključen ili isključen. Tokom simulacije klikni na njega da ga prebaciš.',
+    pot: 'Promenljivi otpornik sa tri nožice. Pomeri klizač i struja se menja — kao dugme za jačinu zvuka.',
+    ldr: 'Otpor mu zavisi od svetla: na svetlu je mali, u mraku veliki. Svetlo menjaš klizačem ☀.',
+    ammeter: 'Meri struju. Stavlja se REDNO, u samo kolo, tako da struja prolazi kroz njega.',
+    voltmeter: 'Meri napon između dve tačke. Stavlja se PARALELNO, preko dela koji meriš.',
+    battery: 'Baterija od 9 V daje energiju. Plus (+) je crvena šina, minus (−) plava.'
+  },
+  lessons: [
+    { t: 'Upali jedan LED', d: 'Baterija → otpornik → LED → nazad na −. Tvoje prvo zatvoreno kolo.', s: [
+      'Postavi <b>žicu</b> od <b>+ šine</b> (crvena) do jedne kolone u gornjem delu.',
+      'Postavi <b>otpornik</b> od te kolone do kolone malo desnije.',
+      'Postavi <b>LED</b>: prvo klikni u kolonu otpornika (duža nožica +), pa u sledeću slobodnu kolonu.',
+      'Postavi <b>žicu</b> od kolone kratke nožice LED-a do <b>− šine</b> (plava).'] },
+    { t: 'Taster', d: 'Taster pali LED samo dok ga držiš. Kad ga pustiš, opruga ga otvori.', s: [
+      'Napravi kolo iz prvog nivoa, ali umesto prve žice stavi <b>taster</b> između + šine i otpornika.',
+      'Pritisni <b>Simuliraj</b>, pa drži taster mišem ili prstom.',
+      'LED treba da svetli dok držiš taster i da se ugasi kad ga pustiš.'] },
+    { t: 'Prekidač', d: 'Prekidač pamti položaj — kao prekidač za svetlo u tvojoj sobi.', s: [
+      'Stavi <b>prekidač</b> u kolo, između + šine i otpornika.',
+      'Simuliraj i klikni na prekidač da ga uključiš i isključiš.',
+      'Ostavi ga uključenog da LED svetli.'] },
+    { t: 'Dva LED-a paralelno', d: 'Svaki LED ima svoj put do baterije. Ako jedan izvadiš, drugi i dalje svetli.', s: [
+      'Napravi dva odvojena kola, svako sa svojim <b>otpornikom</b> i <b>LED-om</b>.',
+      'Oba počinju na <b>+ šini</b> i završavaju na <b>− šini</b>.',
+      'Simuliraj — oba LED-a treba da svetle.'] },
+    { t: 'Dva LED-a redno', d: 'Struja prolazi kroz oba LED-a, jedan za drugim, kao kroz vagone voza.', s: [
+      '+ šina → <b>otpornik</b> → prvi <b>LED</b> → drugi <b>LED</b> → − šina.',
+      'Kratka nožica prvog LED-a ide u istu kolonu kao duga nožica drugog. U toj koloni ne sme biti ništa drugo.',
+      'Simuliraj — svetle oba. Probaj otpornik od 220 Ω ako su slabi.'] },
+    { t: 'Sijalica', d: 'Sijalica ima tanku nit koja se usija kad kroz nju teče struja. Njoj ne treba otpornik.', s: [
+      'Postavi <b>sijalicu</b> između dve kolone.',
+      'Jednu stranu spoji žicom na + šinu, a drugu na − šinu.',
+      'Simuliraj.'] },
+    { t: 'Zujalica', d: 'Zujalica pretvara struju u zvuk. Uključi zvuk 🔊!', s: [
+      'Postavi <b>zujalicu</b>: prvo klikni na stranu koja ide ka plusu (+).',
+      'Spoji je žicama na + i − šinu.',
+      'Simuliraj i slušaj.'] },
+    { t: 'Motor', d: 'Motor pretvara struju u okretanje.', s: [
+      'Postavi <b>motor</b> između dve kolone.',
+      'Spoji ga žicama na + i − šinu.',
+      'Simuliraj — motor se okreće! Probaj da zameniš + i − i gledaj smer.'] },
+    { t: 'Dimer sa potenciometrom', d: 'Potenciometar je otpornik koji menjaš okretanjem. Njime biraš koliko jako LED svetli.', s: [
+      'Postavi <b>potenciometar</b> u gornji deo — zauzima 3 kolone.',
+      'Levu nožicu spoji žicom na + šinu.',
+      'Od srednje nožice (klizač): <b>otpornik</b> → <b>LED</b> → − šina.',
+      'Simuliraj, izaberi potenciometar i pomeraj klizač.'] },
+    { t: 'Fotootpornik', d: 'Napravi LED koji svetli jače kad je svetlije oko njega.', s: [
+      '+ šina → <b>fotootpornik</b> → <b>otpornik</b> → <b>LED</b> → − šina.',
+      'Simuliraj i pomeraj klizač <b>☀ Svetlo</b>.',
+      'LED treba da menja jačinu.'] },
+    { t: 'Dioda – jednosmerna ulica', d: 'Dioda pušta struju samo u jednom smeru. Srebrna traka je strana kroz koju struja izlazi.', s: [
+      '+ šina → <b>dioda</b> (prvo klikni na stranu BEZ trake) → <b>otpornik</b> → <b>LED</b> → − šina.',
+      'Simuliraj — LED svetli.',
+      'Probaj da okreneš diodu: LED se gasi! Vrati je da završiš nivo.'] },
+    { t: 'Merimo struju', d: 'Ampermetar se stavlja U kolo, da struja prođe kroz njega.', s: [
+      'Napravi kolo sa <b>LED-om</b> i <b>otpornikom</b>.',
+      'Na jednom mestu prekini kolo i ubaci <b>ampermetar</b> (prvo klikni na stranu ka plusu).',
+      'Simuliraj i pročitaj koliko miliampera (mA) teče.'] },
+    { t: 'Merimo napon', d: 'Voltmetar se stavlja PREKO dela — po jedna nožica sa svake strane.', s: [
+      'Napravi kolo sa <b>LED-om</b> i <b>otpornikom</b>.',
+      'Postavi <b>voltmetar</b> tako da su mu nožice u kolonama obe nožice LED-a.',
+      'Simuliraj: koliko volti je na LED-u?'] },
+    { t: 'Popravi kolo', d: 'Neko je sastavio ovo kolo, ali LED ne svetli. Pronađi grešku i popravi je!', s: [
+      'Simuliraj i pogledaj kolo.',
+      'Proveri smer LED-a: duža nožica (+) mora ka plusu.',
+      'Obriši deo koji ne valja i postavi ga ispravno.'] },
+    { t: 'Veliko finale', d: 'Pokreni motor, upali LED i oglasi zujalicu — sve u isto vreme!', s: [
+      'Svaki deo dobija svoj put od + šine do − šine.',
+      'Ne zaboravi otpornik za LED.',
+      'Simuliraj — sve radi zajedno!'] }
+  ]
+},
+mk: {
+  name: 'Македонски', flag: '🇲🇰', html: 'mk',
+  ui: {
+    title: 'Работилница за струјни кола', subtitle: 'Состави коло на плочата и притисни Симулирај',
+    help: 'Помош', sound: 'Звук', save: 'Зачувај', myCircuits: 'Мои кола', clear: 'Исчисти',
+    select: 'Избери', undo: 'Врати', redo: 'Повтори', simulate: 'Симулирај', stop: 'Запри',
+    free: 'Слободна игра', learn: 'Ајде да учиме', del: 'Избриши', level: 'Ниво', lessons: 'Лекции',
+    step: 'Чекор', showSolution: 'Покажи решение', resetLesson: 'Почни одново', light: 'Светлина',
+    props: 'Својства', noSelection: 'Избери ја алатката „Избери“ и кликни на дел за да ги видиш неговите својства.',
+    value: 'Отпор', color: 'Боја', position: 'Положба на лизгачот', state: 'Состојба', on: 'Вклучен', off: 'Исклучен',
+    pressed: 'Притиснато', released: 'Пуштено', burnedLabel: 'Изгорен', current: 'Струја', voltage: 'Напон',
+    lessonFooter: 'Кога ќе завршиш, притисни <b>Симулирај</b>. Ако работи, нивото е завршено и отклучуваш нови делови 🔓.',
+    pickFirst: 'Кликни на дупката каде што почнува: {part}.', pickSecond: 'Сега кликни на втората дупка. (Esc = откажи)',
+    pickPot: 'Кликни на дупка — потенциометарот зафаќа 3 соседни дупки во ред.',
+    occupied: 'Таа дупка е веќе зафатена.', sameHole: 'Избери друга дупка.', potBad: 'Тука нема место за потенциометар.',
+    locked: 'Овој дел се отклучува во подоцнежна лекција.',
+    short: '⚠ Краток спој! Плусот е поврзан директно со минусот и батеријата се загрева. Прекини го тој спој.',
+    burned: '💥 LED-от изгоре — течеше премногу струја. Избриши го, стави нов и додај отпорник.',
+    noPower: 'Колото не е затворено — струјата нема каде да тече. Дали се врати на − шината?',
+    simOn: 'Симулацијата работи. Притискај копчиња и префрлај прекинувачи!',
+    saved: 'Зачувано.', loaded: 'Вчитано.', copied: 'Кодот е копиран.', importBad: 'Овој код не е исправен.',
+    lessonDone: 'Браво! Нивото е завршено!', unlockedParts: 'Отклучено:', nextLesson: 'Следна лекција', stay: 'Остани тука',
+    allDone: 'Ги заврши сите лекции! Сега пробај слободна игра.', solutionLoaded: 'Ова е едно решение. Притисни Симулирај!',
+    name: 'Име на колото', load: 'Отвори', exportCode: 'Код на колото (испрати го на другар)', copy: 'Копирај',
+    importLabel: 'Залепи код на коло', importBtn: 'Вчитај код', empty: 'Сè уште нема зачувани кола.', close: 'Затвори',
+    confirmClear: 'Да се избришат сите делови од плочата?', yes: 'Да', no: 'Не', done: 'завршено', defaultName: 'Мое коло',
+    helpItems: [
+      'Избери дел од левата страна, па кликни на две дупки на плочата за да го поставиш.',
+      'Дупките во иста колона (a–e, или f–j) се поврзани одоздола. Долгите шини + и − се поврзани по целата должина.',
+      'Батеријата од 9 V е поврзана на горните шини: + (црвена) и − (сина). Долните шини поврзи ги со жици ако ти требаат.',
+      'Со алатката <b>Избери</b> кликни на дел, па избриши го со копчето <b>Избриши</b> или со тастерот Delete.',
+      'Притисни <b>Симулирај</b> за да видиш како тече струјата. За време на симулацијата можеш да притискаш копчиња и да префрлаш прекинувачи.',
+      '↶ и ↷ ги враќаат и повторуваат потезите.'
+    ]
+  },
+  cats: { power: 'Извори и жици', passive: 'Пасивни', out: 'Излези', sw: 'Прекинувачи', sens: 'Сензори', tools: 'Алатки' },
+  colors: { red: 'Црвена', green: 'Зелена', blue: 'Сина', yellow: 'Жолта', white: 'Бела', black: 'Црна', orange: 'Портокалова' },
+  parts: { wire: 'Жица', resistor: 'Отпорник', led: 'LED', diode: 'Диода', bulb: 'Сијалица', buzzer: 'Зујалка', motor: 'Мотор', button: 'Копче', switch: 'Прекинувач', pot: 'Потенциометар', ldr: 'Фотоотпорник', ammeter: 'Амперметар', voltmeter: 'Волтметар', battery: 'Батерија 9 V' },
+  info: {
+    wire: 'Спроведува струја меѓу две точки. Кликни на првата дупка, па на втората.',
+    resistor: 'Ја ограничува струјата. Без него LED-от изгорува! Обоените ленти ја покажуваат вредноста во оми (Ω).',
+    led: 'Светлечка диода. Свети само кога струјата тече во вистинската насока: подолгата ножичка (+) кон плусот. Секогаш ѝ треба отпорник.',
+    diode: 'Пропушта струја само во една насока, како еднонасочен вентил. Сребрената лента е страната на минусот (−).',
+    bulb: 'Сијалицата свети кога низ нејзиното влакно тече струја. Колку повеќе струја, толку посилно свети.',
+    buzzer: 'Зујалката пишти кога низ неа тече струја. Прво кликни на страната што оди кон плусот (+).',
+    motor: 'Моторот ја претвора струјата во вртење. Кога ќе ги замениш + и −, се врти на другата страна.',
+    button: 'Копчето го затвора колото само додека го држиш притиснато. За време на симулацијата притисни го со глувчето или со прст.',
+    switch: 'Прекинувачот ја памети положбата: вклучен или исклучен. За време на симулацијата кликни на него за да го префрлиш.',
+    pot: 'Променлив отпорник со три ножички. Помести го лизгачот и струјата се менува — како копче за јачина на звукот.',
+    ldr: 'Отпорот му зависи од светлината: на светло е мал, во темно голем. Светлината ја менуваш со лизгачот ☀.',
+    ammeter: 'Мери струја. Се става СЕРИСКИ, во самото коло, за струјата да поминува низ него.',
+    voltmeter: 'Мери напон меѓу две точки. Се става ПАРАЛЕЛНО, преку делот што го мериш.',
+    battery: 'Батеријата од 9 V дава енергија. Плусот (+) е црвената шина, минусот (−) сината.'
+  },
+  lessons: [
+    { t: 'Запали еден LED', d: 'Батерија → отпорник → LED → назад на −. Твоето прво затворено коло.', s: [
+      'Постави <b>жица</b> од <b>+ шината</b> (црвена) до една колона во горниот дел.',
+      'Постави <b>отпорник</b> од таа колона до колона малку подесно.',
+      'Постави <b>LED</b>: прво кликни во колоната на отпорникот (подолгата ножичка +), па во следната слободна колона.',
+      'Постави <b>жица</b> од колоната на кратката ножичка на LED-от до <b>− шината</b> (сина).'] },
+    { t: 'Копче', d: 'Копчето го пали LED-от само додека го држиш. Кога ќе го пуштиш, пружината го отвора.', s: [
+      'Направи го колото од првото ниво, но наместо првата жица стави <b>копче</b> меѓу + шината и отпорникот.',
+      'Притисни <b>Симулирај</b>, па држи го копчето со глувчето или со прст.',
+      'LED-от треба да свети додека го држиш копчето и да се изгасне кога ќе го пуштиш.'] },
+    { t: 'Прекинувач', d: 'Прекинувачот ја памети положбата — како прекинувачот за светло во твојата соба.', s: [
+      'Стави <b>прекинувач</b> во колото, меѓу + шината и отпорникот.',
+      'Симулирај и кликни на прекинувачот за да го вклучиш и исклучиш.',
+      'Остави го вклучен за LED-от да свети.'] },
+    { t: 'Два LED-а паралелно', d: 'Секој LED има свој пат до батеријата. Ако едниот го извадиш, другиот и понатаму свети.', s: [
+      'Направи две одделни кола, секое со свој <b>отпорник</b> и <b>LED</b>.',
+      'Двете почнуваат на <b>+ шината</b> и завршуваат на <b>− шината</b>.',
+      'Симулирај — двата LED-а треба да светат.'] },
+    { t: 'Два LED-а сериски', d: 'Струјата минува низ двата LED-а, еден по друг, како низ вагоните на воз.', s: [
+      '+ шина → <b>отпорник</b> → прв <b>LED</b> → втор <b>LED</b> → − шина.',
+      'Кратката ножичка на првиот LED оди во истата колона како долгата ножичка на вториот. Во таа колона не смее да има ништо друго.',
+      'Симулирај — светат двата. Пробај отпорник од 220 Ω ако се слаби.'] },
+    { t: 'Сијалица', d: 'Сијалицата има тенко влакно што се вжарува кога низ него тече струја. Нејзе не ѝ треба отпорник.', s: [
+      'Постави <b>сијалица</b> меѓу две колони.',
+      'Едната страна поврзи ја со жица на + шината, а другата на − шината.',
+      'Симулирај.'] },
+    { t: 'Зујалка', d: 'Зујалката ја претвора струјата во звук. Вклучи го звукот 🔊!', s: [
+      'Постави <b>зујалка</b>: прво кликни на страната што оди кон плусот (+).',
+      'Поврзи ја со жици на + и − шината.',
+      'Симулирај и слушај.'] },
+    { t: 'Мотор', d: 'Моторот ја претвора струјата во вртење.', s: [
+      'Постави <b>мотор</b> меѓу две колони.',
+      'Поврзи го со жици на + и − шината.',
+      'Симулирај — моторот се врти! Пробај да ги замениш + и − и гледај ја насоката.'] },
+    { t: 'Затемнувач со потенциометар', d: 'Потенциометарот е отпорник што го менуваш со вртење. Со него избираш колку силно свети LED-от.', s: [
+      'Постави <b>потенциометар</b> во горниот дел — зафаќа 3 колони.',
+      'Левата ножичка поврзи ја со жица на + шината.',
+      'Од средната ножичка (лизгачот): <b>отпорник</b> → <b>LED</b> → − шина.',
+      'Симулирај, избери го потенциометарот и мрдај го лизгачот.'] },
+    { t: 'Фотоотпорник', d: 'Направи LED што свети посилно кога околу него е посветло.', s: [
+      '+ шина → <b>фотоотпорник</b> → <b>отпорник</b> → <b>LED</b> → − шина.',
+      'Симулирај и мрдај го лизгачот <b>☀ Светлина</b>.',
+      'LED-от треба да ја менува јачината.'] },
+    { t: 'Диода – еднонасочна улица', d: 'Диодата пушта струја само во една насока. Сребрената лента е страната низ која струјата излегува.', s: [
+      '+ шина → <b>диода</b> (прво кликни на страната БЕЗ лента) → <b>отпорник</b> → <b>LED</b> → − шина.',
+      'Симулирај — LED-от свети.',
+      'Пробај да ја свртиш диодата: LED-от се гаси! Врати ја за да го завршиш нивото.'] },
+    { t: 'Мериме струја', d: 'Амперметарот се става ВО колото, за струјата да мине низ него.', s: [
+      'Направи коло со <b>LED</b> и <b>отпорник</b>.',
+      'На едно место прекини го колото и вметни <b>амперметар</b> (прво кликни на страната кон плусот).',
+      'Симулирај и прочитај колку милиампери (mA) тече.'] },
+    { t: 'Мериме напон', d: 'Волтметарот се става ПРЕКУ делот — по една ножичка од секоја страна.', s: [
+      'Направи коло со <b>LED</b> и <b>отпорник</b>.',
+      'Постави <b>волтметар</b> така што ножичките ќе му бидат во колоните на двете ножички на LED-от.',
+      'Симулирај: колку волти има на LED-от?'] },
+    { t: 'Поправи го колото', d: 'Некој го составил ова коло, но LED-от не свети. Најди ја грешката и поправи ја!', s: [
+      'Симулирај и погледни го колото.',
+      'Провери ја насоката на LED-от: подолгата ножичка (+) мора кон плусот.',
+      'Избриши го делот што не е во ред и постави го правилно.'] },
+    { t: 'Големо финале', d: 'Вклучи го моторот, запали LED и огласи ја зујалката — сè во исто време!', s: [
+      'Секој дел добива свој пат од + шината до − шината.',
+      'Не заборавај отпорник за LED-от.',
+      'Симулирај — сè работи заедно!'] }
+  ]
+},
+ro: {
+  name: 'Română', flag: '🇷🇴', html: 'ro',
+  ui: {
+    title: 'Atelierul de circuite', subtitle: 'Construiește circuitul pe breadboard și apasă Simulează',
+    help: 'Ajutor', sound: 'Sunet', save: 'Salvează', myCircuits: 'Circuitele mele', clear: 'Golește',
+    select: 'Selectează', undo: 'Anulează', redo: 'Refă', simulate: 'Simulează', stop: 'Oprește',
+    free: 'Joacă liber', learn: 'Hai să învățăm', del: 'Șterge', level: 'Nivelul', lessons: 'Lecții',
+    step: 'Pasul', showSolution: 'Arată soluția', resetLesson: 'Ia-o de la capăt', light: 'Lumină',
+    props: 'Proprietăți', noSelection: 'Alege unealta „Selectează” și dă clic pe o piesă ca să-i vezi proprietățile.',
+    value: 'Rezistență', color: 'Culoare', position: 'Poziția cursorului', state: 'Stare', on: 'Pornit', off: 'Oprit',
+    pressed: 'Apăsat', released: 'Eliberat', burnedLabel: 'Ars', current: 'Curent', voltage: 'Tensiune',
+    lessonFooter: 'Când ai terminat, apasă <b>Simulează</b>. Dacă merge, nivelul se încheie și deblochezi piese noi 🔓.',
+    pickFirst: 'Dă clic pe gaura unde începe: {part}.', pickSecond: 'Acum dă clic pe a doua gaură. (Esc = renunță)',
+    pickPot: 'Dă clic pe o gaură — potențiometrul ocupă 3 găuri vecine pe rând.',
+    occupied: 'Gaura aceasta e deja ocupată.', sameHole: 'Alege altă gaură.', potBad: 'Aici nu e loc pentru potențiometru.',
+    locked: 'Piesa aceasta se deblochează într-o lecție mai târzie.',
+    short: '⚠ Scurtcircuit! Plusul e legat direct la minus și bateria se încălzește. Întrerupe legătura.',
+    burned: '💥 LED-ul s-a ars — a trecut prea mult curent. Șterge-l, pune altul și adaugă un rezistor.',
+    noPower: 'Circuitul nu e închis — curentul nu are pe unde să treacă. Te-ai întors la șina −?',
+    simOn: 'Simularea rulează. Apasă butoane și comută întrerupătoare!',
+    saved: 'Salvat.', loaded: 'Încărcat.', copied: 'Codul a fost copiat.', importBad: 'Codul acesta nu e valid.',
+    lessonDone: 'Bravo! Nivel terminat!', unlockedParts: 'Deblocat:', nextLesson: 'Lecția următoare', stay: 'Rămân aici',
+    allDone: 'Ai terminat toate lecțiile! Acum încearcă jocul liber.', solutionLoaded: 'Aceasta e o soluție. Apasă Simulează!',
+    name: 'Numele circuitului', load: 'Deschide', exportCode: 'Codul circuitului (trimite-l unui prieten)', copy: 'Copiază',
+    importLabel: 'Lipește codul unui circuit', importBtn: 'Încarcă codul', empty: 'Încă nu ai circuite salvate.', close: 'Închide',
+    confirmClear: 'Ștergi toate piesele de pe breadboard?', yes: 'Da', no: 'Nu', done: 'terminat', defaultName: 'Circuitul meu',
+    helpItems: [
+      'Alege o piesă din stânga, apoi dă clic pe două găuri ale breadboardului ca s-o așezi.',
+      'Găurile din aceeași coloană (a–e sau f–j) sunt legate pe dedesubt. Șinele lungi + și − sunt legate pe toată lungimea.',
+      'Bateria de 9 V e legată la șinele de sus: + (roșie) și − (albastră). Șinele de jos le legi cu fire dacă îți trebuie.',
+      'Cu unealta <b>Selectează</b> dă clic pe o piesă, apoi șterge-o cu butonul <b>Șterge</b> sau cu tasta Delete.',
+      'Apasă <b>Simulează</b> ca să vezi cum curge curentul. În timpul simulării poți apăsa butoane și comuta întrerupătoare.',
+      '↶ și ↷ anulează și refac mutările.'
+    ]
+  },
+  cats: { power: 'Surse și fire', passive: 'Pasive', out: 'Ieșiri', sw: 'Întrerupătoare', sens: 'Senzori', tools: 'Unelte' },
+  colors: { red: 'Roșu', green: 'Verde', blue: 'Albastru', yellow: 'Galben', white: 'Alb', black: 'Negru', orange: 'Portocaliu' },
+  parts: { wire: 'Fir', resistor: 'Rezistor', led: 'LED', diode: 'Diodă', bulb: 'Bec', buzzer: 'Buzzer', motor: 'Motor', button: 'Buton', switch: 'Întrerupător', pot: 'Potențiometru', ldr: 'Fotorezistor', ammeter: 'Ampermetru', voltmeter: 'Voltmetru', battery: 'Baterie 9 V' },
+  info: {
+    wire: 'Duce curentul între două puncte. Dă clic pe prima gaură, apoi pe a doua.',
+    resistor: 'Limitează curentul. Fără el, LED-ul se arde! Benzile colorate arată valoarea în ohmi (Ω).',
+    led: 'Diodă luminoasă. Se aprinde doar când curentul merge în sensul bun: piciorul lung (+) spre plus. Are mereu nevoie de un rezistor.',
+    diode: 'Lasă curentul să treacă într-un singur sens, ca o supapă. Banda argintie e partea de minus (−).',
+    bulb: 'Becul se aprinde când trece curent prin filament. Cu cât mai mult curent, cu atât luminează mai tare.',
+    buzzer: 'Buzzerul piuie când trece curent prin el. Dă clic întâi pe partea care merge spre plus (+).',
+    motor: 'Motorul transformă curentul în rotație. Dacă inversezi + și −, se învârte invers.',
+    button: 'Butonul închide circuitul doar cât îl ții apăsat. În timpul simulării apasă-l cu mouse-ul sau cu degetul.',
+    switch: 'Întrerupătorul ține minte poziția: pornit sau oprit. În timpul simulării dă clic pe el ca să-l comuți.',
+    pot: 'Rezistor variabil cu trei picioare. Mută cursorul și curentul se schimbă — ca butonul de volum.',
+    ldr: 'Rezistența lui depinde de lumină: la lumină e mică, în întuneric mare. Lumina o schimbi din cursorul ☀.',
+    ammeter: 'Măsoară curentul. Se pune ÎN SERIE, chiar în circuit, ca să treacă curentul prin el.',
+    voltmeter: 'Măsoară tensiunea dintre două puncte. Se pune ÎN PARALEL, peste piesa pe care o măsori.',
+    battery: 'Bateria de 9 V dă energie. Plusul (+) e șina roșie, minusul (−) cea albastră.'
+  },
+  lessons: [
+    { t: 'Aprinde un LED', d: 'Baterie → rezistor → LED → înapoi la −. Primul tău circuit închis.', s: [
+      'Pune un <b>fir</b> de la <b>șina +</b> (roșie) la o coloană din partea de sus.',
+      'Pune un <b>rezistor</b> de la acea coloană la o coloană puțin mai la dreapta.',
+      'Pune <b>LED-ul</b>: dă clic întâi în coloana rezistorului (piciorul lung +), apoi în următoarea coloană liberă.',
+      'Pune un <b>fir</b> de la coloana piciorului scurt al LED-ului la <b>șina −</b> (albastră).'] },
+    { t: 'Butonul', d: 'Butonul aprinde LED-ul doar cât îl ții apăsat. Când îl eliberezi, arcul îl deschide.', s: [
+      'Fă circuitul de la primul nivel, dar în locul primului fir pune un <b>buton</b> între șina + și rezistor.',
+      'Apasă <b>Simulează</b>, apoi ține butonul apăsat cu mouse-ul sau cu degetul.',
+      'LED-ul trebuie să lumineze cât ții butonul și să se stingă când îl eliberezi.'] },
+    { t: 'Întrerupătorul', d: 'Întrerupătorul ține minte poziția — ca întrerupătorul de lumină din camera ta.', s: [
+      'Pune un <b>întrerupător</b> în circuit, între șina + și rezistor.',
+      'Simulează și dă clic pe întrerupător ca să-l pornești și să-l oprești.',
+      'Lasă-l pornit ca LED-ul să lumineze.'] },
+    { t: 'Două LED-uri în paralel', d: 'Fiecare LED are drumul lui până la baterie. Dacă scoți unul, celălalt luminează în continuare.', s: [
+      'Fă două circuite separate, fiecare cu <b>rezistorul</b> și <b>LED-ul</b> lui.',
+      'Amândouă pornesc de la <b>șina +</b> și se termină la <b>șina −</b>.',
+      'Simulează — ambele LED-uri trebuie să lumineze.'] },
+    { t: 'Două LED-uri în serie', d: 'Curentul trece prin ambele LED-uri, unul după altul, ca prin vagoanele unui tren.', s: [
+      'Șina + → <b>rezistor</b> → primul <b>LED</b> → al doilea <b>LED</b> → șina −.',
+      'Piciorul scurt al primului LED intră în aceeași coloană cu piciorul lung al celui de-al doilea. În acea coloană nu trebuie să fie nimic altceva.',
+      'Simulează — luminează amândouă. Încearcă un rezistor de 220 Ω dacă sunt slabe.'] },
+    { t: 'Becul', d: 'Becul are un filament subțire care se înroșește când trece curent prin el. Nu are nevoie de rezistor.', s: [
+      'Pune <b>becul</b> între două coloane.',
+      'Leagă o parte cu un fir la șina +, iar cealaltă la șina −.',
+      'Simulează.'] },
+    { t: 'Buzzerul', d: 'Buzzerul transformă curentul în sunet. Pornește sunetul 🔊!', s: [
+      'Pune <b>buzzerul</b>: dă clic întâi pe partea care merge spre plus (+).',
+      'Leagă-l cu fire la șina + și la șina −.',
+      'Simulează și ascultă.'] },
+    { t: 'Motorul', d: 'Motorul transformă curentul în rotație.', s: [
+      'Pune <b>motorul</b> între două coloane.',
+      'Leagă-l cu fire la șina + și la șina −.',
+      'Simulează — motorul se învârte! Încearcă să inversezi + și − și urmărește sensul.'] },
+    { t: 'Variator cu potențiometru', d: 'Potențiometrul e un rezistor pe care îl schimbi rotindu-l. Cu el alegi cât de tare luminează LED-ul.', s: [
+      'Pune <b>potențiometrul</b> în partea de sus — ocupă 3 coloane.',
+      'Leagă piciorul din stânga cu un fir la șina +.',
+      'Din piciorul din mijloc (cursorul): <b>rezistor</b> → <b>LED</b> → șina −.',
+      'Simulează, selectează potențiometrul și mută cursorul.'] },
+    { t: 'Fotorezistorul', d: 'Fă un LED care luminează mai tare când e mai multă lumină în jur.', s: [
+      'Șina + → <b>fotorezistor</b> → <b>rezistor</b> → <b>LED</b> → șina −.',
+      'Simulează și mută cursorul <b>☀ Lumină</b>.',
+      'LED-ul trebuie să-și schimbe intensitatea.'] },
+    { t: 'Dioda – stradă cu sens unic', d: 'Dioda lasă curentul doar într-un sens. Banda argintie e partea pe unde iese curentul.', s: [
+      'Șina + → <b>diodă</b> (dă clic întâi pe partea FĂRĂ bandă) → <b>rezistor</b> → <b>LED</b> → șina −.',
+      'Simulează — LED-ul luminează.',
+      'Încearcă să întorci dioda: LED-ul se stinge! Pune-o la loc ca să termini nivelul.'] },
+    { t: 'Măsurăm curentul', d: 'Ampermetrul se pune ÎN circuit, ca să treacă curentul prin el.', s: [
+      'Fă un circuit cu un <b>LED</b> și un <b>rezistor</b>.',
+      'Întrerupe circuitul într-un loc și pune acolo un <b>ampermetru</b> (dă clic întâi pe partea spre plus).',
+      'Simulează și citește câți miliamperi (mA) trec.'] },
+    { t: 'Măsurăm tensiunea', d: 'Voltmetrul se pune PESTE piesă — câte un picior de fiecare parte.', s: [
+      'Fă un circuit cu un <b>LED</b> și un <b>rezistor</b>.',
+      'Pune <b>voltmetrul</b> cu picioarele în coloanele celor două picioare ale LED-ului.',
+      'Simulează: câți volți sunt pe LED?'] },
+    { t: 'Repară circuitul', d: 'Cineva a construit acest circuit, dar LED-ul nu se aprinde. Găsește greșeala și repar-o!', s: [
+      'Simulează și uită-te la circuit.',
+      'Verifică sensul LED-ului: piciorul lung (+) trebuie să fie spre plus.',
+      'Șterge piesa greșită și pune-o corect.'] },
+    { t: 'Marea finală', d: 'Pornește motorul, aprinde un LED și fă buzzerul să sune — toate în același timp!', s: [
+      'Fiecare piesă primește propriul drum de la șina + la șina −.',
+      'Nu uita rezistorul pentru LED.',
+      'Simulează — totul merge împreună!'] }
+  ]
+},
+bg: {
+  name: 'Български', flag: '🇧🇬', html: 'bg',
+  ui: {
+    title: 'Работилница за електрически вериги', subtitle: 'Сглоби веригата на макетната платка и натисни Симулирай',
+    help: 'Помощ', sound: 'Звук', save: 'Запази', myCircuits: 'Моите вериги', clear: 'Изчисти',
+    select: 'Избери', undo: 'Отмени', redo: 'Повтори', simulate: 'Симулирай', stop: 'Спри',
+    free: 'Свободна игра', learn: 'Хайде да учим', del: 'Изтрий', level: 'Ниво', lessons: 'Уроци',
+    step: 'Стъпка', showSolution: 'Покажи решение', resetLesson: 'Започни отначало', light: 'Светлина',
+    props: 'Свойства', noSelection: 'Избери инструмента „Избери“ и щракни върху елемент, за да видиш свойствата му.',
+    value: 'Съпротивление', color: 'Цвят', position: 'Положение на плъзгача', state: 'Състояние', on: 'Включен', off: 'Изключен',
+    pressed: 'Натиснат', released: 'Отпуснат', burnedLabel: 'Изгорял', current: 'Ток', voltage: 'Напрежение',
+    lessonFooter: 'Когато свършиш, натисни <b>Симулирай</b>. Ако работи, нивото приключва и отключваш нови елементи 🔓.',
+    pickFirst: 'Щракни върху дупката, където започва: {part}.', pickSecond: 'Сега щракни върху втората дупка. (Esc = отказ)',
+    pickPot: 'Щракни върху дупка — потенциометърът заема 3 съседни дупки в ред.',
+    occupied: 'Тази дупка вече е заета.', sameHole: 'Избери друга дупка.', potBad: 'Тук няма място за потенциометър.',
+    locked: 'Този елемент се отключва в по-късен урок.',
+    short: '⚠ Късо съединение! Плюсът е свързан направо с минуса и батерията се нагрява. Прекъсни тази връзка.',
+    burned: '💥 Светодиодът изгоря — мина твърде много ток. Изтрий го, сложи нов и добави резистор.',
+    noPower: 'Веригата не е затворена — токът няма откъде да мине. Върна ли се до шината −?',
+    simOn: 'Симулацията работи. Натискай бутони и превключвай ключове!',
+    saved: 'Запазено.', loaded: 'Заредено.', copied: 'Кодът е копиран.', importBad: 'Този код не е валиден.',
+    lessonDone: 'Браво! Нивото е завършено!', unlockedParts: 'Отключено:', nextLesson: 'Следващ урок', stay: 'Остани тук',
+    allDone: 'Завърши всички уроци! Сега опитай свободна игра.', solutionLoaded: 'Това е едно решение. Натисни Симулирай!',
+    name: 'Име на веригата', load: 'Отвори', exportCode: 'Код на веригата (изпрати го на приятел)', copy: 'Копирай',
+    importLabel: 'Постави код на верига', importBtn: 'Зареди кода', empty: 'Все още няма запазени вериги.', close: 'Затвори',
+    confirmClear: 'Да се изтрият ли всички елементи от платката?', yes: 'Да', no: 'Не', done: 'завършено', defaultName: 'Моята верига',
+    helpItems: [
+      'Избери елемент отляво, после щракни върху две дупки на платката, за да го поставиш.',
+      'Дупките в една колона (a–e или f–j) са свързани отдолу. Дългите шини + и − са свързани по цялата дължина.',
+      'Батерията от 9 V е свързана към горните шини: + (червена) и − (синя). Долните шини свържи с проводници, ако ти трябват.',
+      'С инструмента <b>Избери</b> щракни върху елемент и го изтрий с бутона <b>Изтрий</b> или с клавиша Delete.',
+      'Натисни <b>Симулирай</b>, за да видиш как тече токът. По време на симулацията можеш да натискаш бутони и да превключваш ключове.',
+      '↶ и ↷ отменят и повтарят ходовете.'
+    ]
+  },
+  cats: { power: 'Източници и проводници', passive: 'Пасивни', out: 'Изходи', sw: 'Ключове', sens: 'Сензори', tools: 'Инструменти' },
+  colors: { red: 'Червен', green: 'Зелен', blue: 'Син', yellow: 'Жълт', white: 'Бял', black: 'Черен', orange: 'Оранжев' },
+  parts: { wire: 'Проводник', resistor: 'Резистор', led: 'Светодиод', diode: 'Диод', bulb: 'Крушка', buzzer: 'Зумер', motor: 'Мотор', button: 'Бутон', switch: 'Ключ', pot: 'Потенциометър', ldr: 'Фоторезистор', ammeter: 'Амперметър', voltmeter: 'Волтметър', battery: 'Батерия 9 V' },
+  info: {
+    wire: 'Провежда ток между две точки. Щракни върху първата дупка, после върху втората.',
+    resistor: 'Ограничава тока. Без него светодиодът изгаря! Цветните ивици показват стойността в омове (Ω).',
+    led: 'Светодиод. Свети само когато токът тече в правилната посока: дългото краче (+) към плюса. Винаги му трябва резистор.',
+    diode: 'Пропуска ток само в една посока, като еднопосочен клапан. Сребристата ивица е страната на минуса (−).',
+    bulb: 'Крушката свети, когато през жичката ѝ тече ток. Колкото повече ток, толкова по-силно свети.',
+    buzzer: 'Зумерът пищи, когато през него тече ток. Първо щракни върху страната към плюса (+).',
+    motor: 'Моторът превръща тока във въртене. Ако размениш + и −, се върти в обратна посока.',
+    button: 'Бутонът затваря веригата само докато го държиш натиснат. По време на симулацията го натисни с мишката или с пръст.',
+    switch: 'Ключът помни положението си: включен или изключен. По време на симулацията щракни върху него, за да го превключиш.',
+    pot: 'Променлив резистор с три крачета. Премести плъзгача и токът се променя — като копчето за сила на звука.',
+    ldr: 'Съпротивлението му зависи от светлината: на светло е малко, на тъмно — голямо. Светлината се променя с плъзгача ☀.',
+    ammeter: 'Мери тока. Свързва се ПОСЛЕДОВАТЕЛНО, в самата верига, за да минава токът през него.',
+    voltmeter: 'Мери напрежението между две точки. Свързва се УСПОРЕДНО, върху елемента, който измерваш.',
+    battery: 'Батерията от 9 V дава енергия. Плюсът (+) е червената шина, минусът (−) — синята.'
+  },
+  lessons: [
+    { t: 'Запали един светодиод', d: 'Батерия → резистор → светодиод → обратно към −. Твоята първа затворена верига.', s: [
+      'Постави <b>проводник</b> от <b>шината +</b> (червена) до една колона в горната част.',
+      'Постави <b>резистор</b> от тази колона до колона малко по-надясно.',
+      'Постави <b>светодиода</b>: първо щракни в колоната на резистора (дългото краче +), после в следващата свободна колона.',
+      'Постави <b>проводник</b> от колоната на късото краче на светодиода до <b>шината −</b> (синя).'] },
+    { t: 'Бутон', d: 'Бутонът пали светодиода само докато го държиш. Когато го пуснеш, пружината го отваря.', s: [
+      'Направи веригата от първото ниво, но вместо първия проводник сложи <b>бутон</b> между шината + и резистора.',
+      'Натисни <b>Симулирай</b> и задръж бутона с мишката или с пръст.',
+      'Светодиодът трябва да свети, докато държиш бутона, и да изгасне, когато го пуснеш.'] },
+    { t: 'Ключ', d: 'Ключът помни положението си — като ключа за лампата в твоята стая.', s: [
+      'Сложи <b>ключ</b> във веригата, между шината + и резистора.',
+      'Симулирай и щракни върху ключа, за да го включваш и изключваш.',
+      'Остави го включен, за да свети светодиодът.'] },
+    { t: 'Два светодиода успоредно', d: 'Всеки светодиод има свой път до батерията. Ако извадиш единия, другият продължава да свети.', s: [
+      'Направи две отделни вериги, всяка със свой <b>резистор</b> и <b>светодиод</b>.',
+      'И двете започват от <b>шината +</b> и свършват на <b>шината −</b>.',
+      'Симулирай — двата светодиода трябва да светят.'] },
+    { t: 'Два светодиода последователно', d: 'Токът минава през двата светодиода един след друг, като през вагоните на влак.', s: [
+      'Шина + → <b>резистор</b> → първи <b>светодиод</b> → втори <b>светодиод</b> → шина −.',
+      'Късото краче на първия светодиод е в същата колона като дългото краче на втория. В тази колона не бива да има нищо друго.',
+      'Симулирай — светят и двата. Опитай резистор 220 Ω, ако са слаби.'] },
+    { t: 'Крушка', d: 'Крушката има тънка жичка, която се нажежава, когато през нея тече ток. Тя няма нужда от резистор.', s: [
+      'Постави <b>крушка</b> между две колони.',
+      'Свържи едната страна с проводник към шината +, а другата — към шината −.',
+      'Симулирай.'] },
+    { t: 'Зумер', d: 'Зумерът превръща тока в звук. Включи звука 🔊!', s: [
+      'Постави <b>зумера</b>: първо щракни върху страната към плюса (+).',
+      'Свържи го с проводници към шините + и −.',
+      'Симулирай и слушай.'] },
+    { t: 'Мотор', d: 'Моторът превръща тока във въртене.', s: [
+      'Постави <b>мотор</b> между две колони.',
+      'Свържи го с проводници към шините + и −.',
+      'Симулирай — моторът се върти! Опитай да размениш + и − и гледай посоката.'] },
+    { t: 'Димер с потенциометър', d: 'Потенциометърът е резистор, който променяш с въртене. С него избираш колко силно да свети светодиодът.', s: [
+      'Постави <b>потенциометъра</b> в горната част — заема 3 колони.',
+      'Свържи лявото краче с проводник към шината +.',
+      'От средното краче (плъзгача): <b>резистор</b> → <b>светодиод</b> → шина −.',
+      'Симулирай, избери потенциометъра и мести плъзгача.'] },
+    { t: 'Фоторезистор', d: 'Направи светодиод, който свети по-силно, когато наоколо е по-светло.', s: [
+      'Шина + → <b>фоторезистор</b> → <b>резистор</b> → <b>светодиод</b> → шина −.',
+      'Симулирай и мести плъзгача <b>☀ Светлина</b>.',
+      'Светодиодът трябва да променя яркостта си.'] },
+    { t: 'Диод – еднопосочна улица', d: 'Диодът пропуска ток само в една посока. Сребристата ивица е страната, през която токът излиза.', s: [
+      'Шина + → <b>диод</b> (първо щракни върху страната БЕЗ ивица) → <b>резистор</b> → <b>светодиод</b> → шина −.',
+      'Симулирай — светодиодът свети.',
+      'Опитай да обърнеш диода: светодиодът угасва! Върни го, за да завършиш нивото.'] },
+    { t: 'Мерим тока', d: 'Амперметърът се слага ВЪВ веригата, за да минава токът през него.', s: [
+      'Направи верига със <b>светодиод</b> и <b>резистор</b>.',
+      'Прекъсни веригата на едно място и сложи там <b>амперметър</b> (първо щракни върху страната към плюса).',
+      'Симулирай и прочети колко милиампера (mA) текат.'] },
+    { t: 'Мерим напрежението', d: 'Волтметърът се слага ВЪРХУ елемента — по едно краче от всяка страна.', s: [
+      'Направи верига със <b>светодиод</b> и <b>резистор</b>.',
+      'Постави <b>волтметъра</b> така, че крачетата му да са в колоните на двете крачета на светодиода.',
+      'Симулирай: колко волта има на светодиода?'] },
+    { t: 'Поправи веригата', d: 'Някой е сглобил тази верига, но светодиодът не свети. Намери грешката и я поправи!', s: [
+      'Симулирай и разгледай веригата.',
+      'Провери посоката на светодиода: дългото краче (+) трябва да е към плюса.',
+      'Изтрий сгрешения елемент и го постави правилно.'] },
+    { t: 'Голям финал', d: 'Завърти мотора, запали светодиод и накарай зумера да звучи — всичко едновременно!', s: [
+      'Всеки елемент получава свой път от шината + до шината −.',
+      'Не забравяй резистора за светодиода.',
+      'Симулирай — всичко работи заедно!'] }
+  ]
+},
+en: {
+  name: 'English', flag: '🇬🇧', html: 'en',
+  ui: {
+    title: 'Circuit Workshop', subtitle: 'Build a circuit on the breadboard and press Simulate',
+    help: 'Help', sound: 'Sound', save: 'Save', myCircuits: 'My circuits', clear: 'Clear',
+    select: 'Select', undo: 'Undo', redo: 'Redo', simulate: 'Simulate', stop: 'Stop',
+    free: 'Free play', learn: "Let's learn", del: 'Delete', level: 'Level', lessons: 'Lessons',
+    step: 'Step', showSolution: 'Show solution', resetLesson: 'Start over', light: 'Light',
+    props: 'Properties', noSelection: 'Pick the Select tool and click a part to see its properties.',
+    value: 'Resistance', color: 'Colour', position: 'Slider position', state: 'State', on: 'On', off: 'Off',
+    pressed: 'Pressed', released: 'Released', burnedLabel: 'Burnt out', current: 'Current', voltage: 'Voltage',
+    lessonFooter: 'When you are done, press <b>Simulate</b>. If it works, the level is complete and you unlock new parts 🔓.',
+    pickFirst: 'Click the hole where it starts: {part}.', pickSecond: 'Now click the second hole. (Esc = cancel)',
+    pickPot: 'Click a hole — the potentiometer takes 3 neighbouring holes in a row.',
+    occupied: 'That hole is already taken.', sameHole: 'Pick a different hole.', potBad: 'There is no room for a potentiometer here.',
+    locked: 'This part unlocks in a later lesson.',
+    short: '⚠ Short circuit! Plus is connected straight to minus and the battery is heating up. Break that connection.',
+    burned: '💥 The LED burnt out — too much current flowed. Delete it, put in a new one and add a resistor.',
+    noPower: 'The circuit is not closed — the current has nowhere to go. Did you get back to the − rail?',
+    simOn: 'Simulation running. Press buttons and flip switches!',
+    saved: 'Saved.', loaded: 'Loaded.', copied: 'Code copied.', importBad: 'That code is not valid.',
+    lessonDone: 'Well done! Level complete!', unlockedParts: 'Unlocked:', nextLesson: 'Next lesson', stay: 'Stay here',
+    allDone: 'You finished all the lessons! Now try free play.', solutionLoaded: 'Here is one solution. Press Simulate!',
+    name: 'Circuit name', load: 'Open', exportCode: 'Circuit code (send it to a friend)', copy: 'Copy',
+    importLabel: 'Paste a circuit code', importBtn: 'Load code', empty: 'No saved circuits yet.', close: 'Close',
+    confirmClear: 'Remove all parts from the breadboard?', yes: 'Yes', no: 'No', done: 'done', defaultName: 'My circuit',
+    helpItems: [
+      'Pick a part on the left, then click two holes on the breadboard to place it.',
+      'Holes in the same column (a–e, or f–j) are connected underneath. The long + and − rails are connected along their whole length.',
+      'The 9 V battery is connected to the top rails: + (red) and − (blue). Connect the bottom rails with wires if you need them.',
+      'With the <b>Select</b> tool, click a part, then remove it with the <b>Delete</b> button or the Delete key.',
+      'Press <b>Simulate</b> to see the current flow. While simulating you can press buttons and flip switches.',
+      '↶ and ↷ undo and redo your moves.'
+    ]
+  },
+  cats: { power: 'Power and wires', passive: 'Passive', out: 'Outputs', sw: 'Switches', sens: 'Sensors', tools: 'Tools' },
+  colors: { red: 'Red', green: 'Green', blue: 'Blue', yellow: 'Yellow', white: 'White', black: 'Black', orange: 'Orange' },
+  parts: { wire: 'Wire', resistor: 'Resistor', led: 'LED', diode: 'Diode', bulb: 'Bulb', buzzer: 'Buzzer', motor: 'Motor', button: 'Push button', switch: 'Switch', pot: 'Potentiometer', ldr: 'Light sensor (LDR)', ammeter: 'Ammeter', voltmeter: 'Voltmeter', battery: '9 V battery' },
+  info: {
+    wire: 'Carries current between two points. Click the first hole, then the second.',
+    resistor: 'Limits the current. Without it the LED burns out! The colour bands show its value in ohms (Ω).',
+    led: 'Light-emitting diode. It only lights when current flows the right way: long leg (+) towards plus. It always needs a resistor.',
+    diode: 'Lets current through in one direction only, like a one-way valve. The silver band is the minus (−) side.',
+    bulb: 'A bulb lights up when current flows through its filament. More current, brighter light.',
+    buzzer: 'A buzzer beeps when current flows through it. Click the side going to plus (+) first.',
+    motor: 'A motor turns current into spinning. Swap + and − and it spins the other way.',
+    button: 'A push button closes the circuit only while you hold it down. While simulating, press it with the mouse or your finger.',
+    switch: 'A switch remembers its position: on or off. While simulating, click it to flip it.',
+    pot: 'A variable resistor with three legs. Move the slider and the current changes — like a volume knob.',
+    ldr: 'Its resistance depends on light: small in the light, large in the dark. Change the light with the ☀ slider.',
+    ammeter: 'Measures current. It goes IN SERIES, inside the circuit, so the current flows through it.',
+    voltmeter: 'Measures the voltage between two points. It goes IN PARALLEL, across the part you are measuring.',
+    battery: 'The 9 V battery supplies the energy. Plus (+) is the red rail, minus (−) the blue one.'
+  },
+  lessons: [
+    { t: 'Light up an LED', d: 'Battery → resistor → LED → back to −. Your first closed circuit.', s: [
+      'Place a <b>wire</b> from the <b>+ rail</b> (red) to a column in the top half.',
+      'Place a <b>resistor</b> from that column to a column a little further right.',
+      'Place the <b>LED</b>: click the resistor’s column first (long leg +), then the next free column.',
+      'Place a <b>wire</b> from the column of the LED’s short leg to the <b>− rail</b> (blue).'] },
+    { t: 'Push button', d: 'The button lights the LED only while you hold it. Let go and the spring opens it.', s: [
+      'Build the circuit from level one, but instead of the first wire put a <b>push button</b> between the + rail and the resistor.',
+      'Press <b>Simulate</b>, then hold the button with the mouse or your finger.',
+      'The LED should light while you hold the button and go out when you let go.'] },
+    { t: 'Switch', d: 'A switch remembers its position — like the light switch in your room.', s: [
+      'Put a <b>switch</b> into the circuit, between the + rail and the resistor.',
+      'Simulate and click the switch to turn it on and off.',
+      'Leave it on so the LED lights.'] },
+    { t: 'Two LEDs in parallel', d: 'Each LED has its own path to the battery. Take one out and the other keeps shining.', s: [
+      'Build two separate circuits, each with its own <b>resistor</b> and <b>LED</b>.',
+      'Both start at the <b>+ rail</b> and end at the <b>− rail</b>.',
+      'Simulate — both LEDs should light.'] },
+    { t: 'Two LEDs in series', d: 'The current flows through both LEDs, one after the other, like through the carriages of a train.', s: [
+      '+ rail → <b>resistor</b> → first <b>LED</b> → second <b>LED</b> → − rail.',
+      'The short leg of the first LED goes in the same column as the long leg of the second. Nothing else may be in that column.',
+      'Simulate — both light. Try a 220 Ω resistor if they are dim.'] },
+    { t: 'Bulb', d: 'A bulb has a thin filament that glows when current flows through it. It does not need a resistor.', s: [
+      'Place a <b>bulb</b> between two columns.',
+      'Connect one side with a wire to the + rail and the other to the − rail.',
+      'Simulate.'] },
+    { t: 'Buzzer', d: 'A buzzer turns current into sound. Turn the sound on 🔊!', s: [
+      'Place the <b>buzzer</b>: click the side going to plus (+) first.',
+      'Connect it with wires to the + and − rails.',
+      'Simulate and listen.'] },
+    { t: 'Motor', d: 'A motor turns current into spinning.', s: [
+      'Place a <b>motor</b> between two columns.',
+      'Connect it with wires to the + and − rails.',
+      'Simulate — the motor spins! Try swapping + and − and watch the direction.'] },
+    { t: 'Dimmer with a potentiometer', d: 'A potentiometer is a resistor you change by turning it. Use it to choose how brightly the LED shines.', s: [
+      'Place a <b>potentiometer</b> in the top half — it takes 3 columns.',
+      'Connect the left leg with a wire to the + rail.',
+      'From the middle leg (the wiper): <b>resistor</b> → <b>LED</b> → − rail.',
+      'Simulate, select the potentiometer and move its slider.'] },
+    { t: 'Light sensor', d: 'Make an LED that shines brighter when it is lighter around it.', s: [
+      '+ rail → <b>light sensor</b> → <b>resistor</b> → <b>LED</b> → − rail.',
+      'Simulate and move the <b>☀ Light</b> slider.',
+      'The LED should change its brightness.'] },
+    { t: 'Diode – a one-way street', d: 'A diode lets current through in one direction only. The silver band marks the side where current leaves.', s: [
+      '+ rail → <b>diode</b> (click the side WITHOUT the band first) → <b>resistor</b> → <b>LED</b> → − rail.',
+      'Simulate — the LED lights.',
+      'Try turning the diode around: the LED goes out! Put it back to finish the level.'] },
+    { t: 'Measuring current', d: 'An ammeter goes INTO the circuit, so the current flows through it.', s: [
+      'Build a circuit with an <b>LED</b> and a <b>resistor</b>.',
+      'Break the circuit in one place and put an <b>ammeter</b> there (click the plus side first).',
+      'Simulate and read how many milliamps (mA) flow.'] },
+    { t: 'Measuring voltage', d: 'A voltmeter goes ACROSS a part — one leg on each side.', s: [
+      'Build a circuit with an <b>LED</b> and a <b>resistor</b>.',
+      'Place a <b>voltmeter</b> with its legs in the columns of the LED’s two legs.',
+      'Simulate: how many volts are across the LED?'] },
+    { t: 'Fix the circuit', d: 'Someone built this circuit, but the LED does not light. Find the mistake and fix it!', s: [
+      'Simulate and look at the circuit.',
+      'Check the LED’s direction: the long leg (+) must face plus.',
+      'Delete the wrong part and place it correctly.'] },
+    { t: 'Grand finale', d: 'Spin the motor, light an LED and sound the buzzer — all at the same time!', s: [
+      'Each part gets its own path from the + rail to the − rail.',
+      'Don’t forget the resistor for the LED.',
+      'Simulate — everything works together!'] }
+  ]
+}
+};
+if (typeof module !== 'undefined') module.exports = I18N;
+</script>
+<script>/* Core: breadboard geometry, circuit solver, lessons. No DOM. */
+const CORE = (() => {
+  const COLS = 30, P = 22, X0 = 120;
+  const TERM = 'abcdefghij';
+  const ROWY = { tp: 40, tn: 62, a: 110, b: 132, c: 154, d: 176, e: 198, f: 250, g: 272, h: 294, i: 316, j: 338, bp: 386, bn: 408 };
+  const ROWS = Object.keys(ROWY);
+  const PINS = { wire: 2, resistor: 2, led: 2, diode: 2, bulb: 2, buzzer: 2, motor: 2, button: 2, switch: 2, pot: 3, ldr: 2, ammeter: 2, voltmeter: 2 };
+  const LEDVF = { red: 1.8, yellow: 2.0, green: 2.1, blue: 3.0, white: 3.0 };
+  const BAT_V = 9, BAT_R = 0.5, POT_R = 10000;
+
+  const holePos = h => { const [r, c] = h.split(':'); return { x: X0 + (+c) * P, y: ROWY[r] }; };
+  const holeNet = h => { const [r, c] = h.split(':'); return r.length === 2 ? r : ('abcde'.includes(r) ? 'U' : 'L') + c; };
+  const allHoles = () => { const a = []; for (const r of ROWS) for (let c = 0; c < COLS; c++) a.push(r + ':' + c); return a; };
+  const ldrR = light => Math.pow(10, Math.log10(50000) + (Math.log10(150) - Math.log10(50000)) * light);
+
+  function gauss(M, b) {
+    const n = b.length;
+    for (let k = 0; k < n; k++) {
+      let p = k, mx = Math.abs(M[k][k]);
+      for (let i = k + 1; i < n; i++) if (Math.abs(M[i][k]) > mx) { mx = Math.abs(M[i][k]); p = i; }
+      if (mx < 1e-18) continue;
+      if (p !== k) { [M[k], M[p]] = [M[p], M[k]]; [b[k], b[p]] = [b[p], b[k]]; }
+      for (let i = k + 1; i < n; i++) {
+        const f = M[i][k] / M[k][k]; if (!f) continue;
+        for (let j = k; j < n; j++) M[i][j] -= f * M[k][j];
+        b[i] -= f * b[k];
+      }
+    }
+    const x = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) {
+      let s = b[i]; for (let j = i + 1; j < n; j++) s -= M[i][j] * x[j];
+      x[i] = Math.abs(M[i][i]) < 1e-18 ? 0 : s / M[i][i];
+    }
+    return x;
+  }
+
+  /* opt: {light, button:bool|undefined, switch:bool|undefined, pot:number|undefined} */
+  function solve(circ, opt = {}) {
+    const parts = circ.parts || [];
+    const light = opt.light ?? circ.light ?? 0.7;
+    const nets = new Set(['tp', 'tn']);
+    for (const p of parts) for (const h of p.pins) nets.add(holeNet(h));
+    const idx = {}; let n = 0;
+    for (const k of nets) if (k !== 'tn') idx[k] = n++;
+    const ix = k => (k === 'tn' ? -1 : idx[k]);
+    // element: {a,b,G,E,pid,sub,diode?:{Vf,Ron},on}
+    const els = [];
+    const add = (a, b, G, E, pid, sub) => { const e = { a: ix(a), b: ix(b), G, E: E || 0, pid, sub }; els.push(e); return e; };
+    add('tp', 'tn', 1 / BAT_R, BAT_V, '_bat');
+    const diodes = [];
+    const addD = (a, b, Vf, Ron, pid) => { const e = add(a, b, 1e-9, 0, pid); e.diode = { Vf, Ron }; e.on = false; diodes.push(e); };
+    for (const p of parts) {
+      const N = p.pins.map(holeNet), pr = p.props || {};
+      switch (p.type) {
+        case 'wire': add(N[0], N[1], 1000, 0, p.id); break;
+        case 'resistor': add(N[0], N[1], 1 / (pr.R || 330), 0, p.id); break;
+        case 'led': if (!pr.burned) addD(N[0], N[1], LEDVF[pr.color || 'red'], 15, p.id); break;
+        case 'diode': addD(N[0], N[1], 0.7, 1, p.id); break;
+        case 'buzzer': addD(N[0], N[1], 1.5, 250, p.id); break;
+        case 'bulb': add(N[0], N[1], 1 / 60, 0, p.id); break;
+        case 'motor': add(N[0], N[1], 1 / 25, 0, p.id); break;
+        case 'ldr': add(N[0], N[1], 1 / ldrR(light), 0, p.id); break;
+        case 'ammeter': add(N[0], N[1], 20, 0, p.id); break;
+        case 'voltmeter': add(N[0], N[1], 1e-7, 0, p.id); break;
+        case 'button': { const on = opt.button ?? !!pr.pressed; if (on) add(N[0], N[1], 50, 0, p.id); break; }
+        case 'switch': { const on = opt.switch ?? !!pr.on; if (on) add(N[0], N[1], 50, 0, p.id); break; }
+        case 'pot': {
+          const pos = opt.pot ?? (pr.pos ?? 0.5);
+          add(N[0], N[1], 1 / Math.max(pos * POT_R, 1), 0, p.id, 'aw');
+          add(N[1], N[2], 1 / Math.max((1 - pos) * POT_R, 1), 0, p.id, 'wb');
+          break;
+        }
+      }
+    }
+    let V = [];
+    const run = () => {
+      const M = Array.from({ length: n }, () => new Array(n).fill(0)), rhs = new Array(n).fill(0);
+      for (let i = 0; i < n; i++) M[i][i] += 1e-9;
+      for (const e of els) {
+        let G = e.G, E = e.E;
+        if (e.diode) { if (e.on) { G = 1 / e.diode.Ron; E = e.diode.Vf; } else { G = 1e-9; E = 0; } }
+        const { a, b } = e;
+        if (a >= 0) { M[a][a] += G; rhs[a] += G * E; }
+        if (b >= 0) { M[b][b] += G; rhs[b] -= G * E; }
+        if (a >= 0 && b >= 0) { M[a][b] -= G; M[b][a] -= G; }
+      }
+      V = gauss(M, rhs);
+    };
+    const vv = i => (i < 0 ? 0 : V[i]);
+    for (let it = 0; it < 400; it++) {
+      run();
+      let worst = null, wv = 1e-7;
+      for (const d of diodes) {
+        const Vd = vv(d.a) - vv(d.b);
+        let viol = 0;
+        if (d.on) { const I = (Vd - d.diode.Vf) / d.diode.Ron; if (I < 0) viol = -I * d.diode.Ron; }
+        else if (Vd > d.diode.Vf) viol = Vd - d.diode.Vf;
+        if (viol > wv) { wv = viol; worst = d; }
+      }
+      if (!worst) break;
+      worst.on = !worst.on;
+    }
+    const cur = e => {
+      let G = e.G, E = e.E;
+      if (e.diode) { if (e.on) { G = 1 / e.diode.Ron; E = e.diode.Vf; } else { G = 1e-9; E = 0; } }
+      return G * (vv(e.a) - vv(e.b) - E);
+    };
+    const res = { parts: {}, batI: 0, short: false, netV: {}, pinNet: {}, netPins: {} };
+    const uf = {}; const fd = x => { if (uf[x] === undefined) uf[x] = x; while (uf[x] !== x) { uf[x] = uf[uf[x]]; x = uf[x]; } return x; };
+    for (const p of parts) if (p.type === 'wire') { const a = fd(holeNet(p.pins[0])), b = fd(holeNet(p.pins[1])); if (a !== b) uf[a] = b; }
+    for (const k of nets) res.netV[k] = vv(ix(k));
+    for (const e of els) {
+      if (e.pid === '_bat') { res.batI = -cur(e); continue; }
+      const I = cur(e);
+      const r = res.parts[e.pid] || (res.parts[e.pid] = { I: 0 });
+      if (e.sub === 'aw') r.Iaw = I; else if (e.sub === 'wb') r.Iwb = I; else r.I = I;
+    }
+    res.short = res.batI > 1.5;
+    for (const p of parts) {
+      const r = res.parts[p.id] || (res.parts[p.id] = { I: 0 });
+      const N = p.pins.map(holeNet);
+      const G = N.map(fd);
+      res.pinNet[p.id] = G;
+      if (p.type !== 'wire' && p.type !== 'voltmeter') for (const k of G) res.netPins[k] = (res.netPins[k] || 0) + 1;
+      r.V = res.netV[N[0]] - res.netV[N[1]];
+      const I = r.I || 0, pr = p.props || {};
+      switch (p.type) {
+        case 'led':
+          if (pr.burned) { r.lit = false; r.bright = 0; break; }
+          r.lit = I > 0.0015; r.bright = Math.min(1, Math.max(0, I / 0.02)); r.burn = I > 0.06; break;
+        case 'bulb': r.bright = Math.min(1.2, Math.abs(I) / 0.15); r.lit = r.bright > 0.15; break;
+        case 'motor': r.speed = I / 0.36; r.spinning = Math.abs(I) > 0.05; break;
+        case 'buzzer': r.sounding = I > 0.003; break;
+        case 'diode': r.conducting = I > 0.001; break;
+        case 'ammeter': r.reading = I * 1000; break;
+        case 'voltmeter': r.reading = r.V; break;
+      }
+    }
+    res.flowing = res.batI > 1e-5;
+    return res;
+  }
+
+  /* ---------- lesson helpers ---------- */
+  const has = (c, t) => c.parts.some(p => p.type === t);
+  const ofType = (c, t) => c.parts.filter(p => p.type === t);
+  const ok = r => !r.short && !Object.values(r.parts).some(x => x.burn);
+  const litLeds = (c, r) => ofType(c, 'led').filter(p => r.parts[p.id] && r.parts[p.id].lit);
+  const ledI = (c, r) => ofType(c, 'led').reduce((s, p) => s + Math.max(0, (r.parts[p.id] || {}).I || 0), 0);
+
+  const H = (r, c) => r + ':' + c;
+  const W = (a, b) => ({ type: 'wire', pins: [a, b], props: {} });
+  const Rr = (a, b, R = 330) => ({ type: 'resistor', pins: [a, b], props: { R } });
+  const L = (a, b, color = 'red') => ({ type: 'led', pins: [a, b], props: { color } });
+  const X = (type, a, b, props = {}) => ({ type, pins: [a, b], props });
+  const basic = [W('tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:7', 'c:10'), W('a:10', 'tn:10')];
+
+  const LESSONS = [
+    { id: 'led', unlock: ['wire', 'resistor', 'led'],
+      check: (c, s, r) => ok(r) && has(c, 'resistor') && litLeds(c, r).length >= 1,
+      solution: basic },
+    { id: 'button', unlock: ['button'],
+      check: (c, s, r) => { if (!has(c, 'button')) return false; const on = s(c, { button: true }), off = s(c, { button: false }); return ok(on) && litLeds(c, on).length >= 1 && litLeds(c, off).length === 0 && litLeds(c, r).length >= 1; },
+      solution: [X('button', 'tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:7', 'c:10'), W('a:10', 'tn:10')] },
+    { id: 'switch', unlock: ['switch'],
+      check: (c, s, r) => { if (!has(c, 'switch')) return false; const on = s(c, { switch: true }), off = s(c, { switch: false }); return ok(on) && litLeds(c, on).length >= 1 && litLeds(c, off).length === 0 && litLeds(c, r).length >= 1; },
+      solution: [X('switch', 'tp:2', 'a:2', { on: true }), Rr('b:2', 'b:7'), L('c:7', 'c:10'), W('a:10', 'tn:10')] },
+    { id: 'parallel', unlock: [],
+      check: (c, s, r) => { if (!ok(r)) return false; const lit = litLeds(c, r); for (let i = 0; i < lit.length; i++) for (let j = i + 1; j < lit.length; j++) if (r.pinNet[lit[i].id][1] === r.pinNet[lit[j].id][1] && r.pinNet[lit[i].id][0] !== r.pinNet[lit[j].id][1]) return true; return false; },
+      solution: [...basic, W('tp:14', 'a:14'), Rr('b:14', 'b:19'), L('c:19', 'c:22', 'green'), W('a:22', 'tn:22')] },
+    { id: 'series', unlock: [],
+      check: (c, s, r) => { if (!ok(r)) return false; const lit = litLeds(c, r); for (const A of lit) for (const B of lit) if (A !== B) { const k = r.pinNet[A.id][1]; if (k === r.pinNet[B.id][0] && r.netPins[k] === 2) return true; } return false; },
+      solution: [W('tp:2', 'a:2'), Rr('b:2', 'b:7', 220), L('c:7', 'c:10'), L('d:10', 'd:13', 'yellow'), W('a:13', 'tn:13')] },
+    { id: 'bulb', unlock: ['bulb'],
+      check: (c, s, r) => ok(r) && ofType(c, 'bulb').some(p => r.parts[p.id].lit),
+      solution: [W('tp:3', 'a:3'), X('bulb', 'b:3', 'b:8'), W('a:8', 'tn:8')] },
+    { id: 'buzzer', unlock: ['buzzer'],
+      check: (c, s, r) => ok(r) && ofType(c, 'buzzer').some(p => r.parts[p.id].sounding),
+      solution: [W('tp:3', 'a:3'), X('buzzer', 'b:3', 'b:8'), W('a:8', 'tn:8')] },
+    { id: 'motor', unlock: ['motor'],
+      check: (c, s, r) => ok(r) && ofType(c, 'motor').some(p => r.parts[p.id].spinning),
+      solution: [W('tp:3', 'a:3'), X('motor', 'b:3', 'b:8'), W('a:8', 'tn:8')] },
+    { id: 'pot', unlock: ['pot'],
+      check: (c, s, r) => { if (!has(c, 'pot')) return false; const A = s(c, { pot: 0.15 }), B = s(c, { pot: 0.85 }); if (!ok(A) || !ok(B)) return false; const ia = ledI(c, A), ib = ledI(c, B); return (litLeds(c, A).length || litLeds(c, B).length) && Math.abs(ia - ib) > 0.3 * Math.max(ia, ib); },
+      solution: [{ type: 'pot', pins: ['a:2', 'a:3', 'a:4'], props: { pos: 0.1 } }, W('tp:2', 'b:2'), Rr('c:3', 'c:8'), L('d:8', 'd:11'), W('a:11', 'tn:11')] },
+    { id: 'ldr', unlock: ['ldr'],
+      check: (c, s, r) => { if (!has(c, 'ldr')) return false; const A = s(c, { light: 0.1 }), B = s(c, { light: 0.95 }); if (!ok(A) || !ok(B)) return false; const ia = ledI(c, A), ib = ledI(c, B); return (litLeds(c, A).length || litLeds(c, B).length) && Math.abs(ia - ib) > 0.3 * Math.max(ia, ib); },
+      solution: [W('tp:2', 'a:2'), X('ldr', 'b:2', 'b:6'), Rr('c:6', 'c:10', 220), L('d:10', 'd:13'), W('a:13', 'tn:13')] },
+    { id: 'diode', unlock: ['diode'],
+      check: (c, s, r) => ok(r) && ofType(c, 'diode').some(p => r.parts[p.id].conducting) && litLeds(c, r).length >= 1,
+      solution: [W('tp:2', 'a:2'), X('diode', 'b:2', 'b:6'), Rr('c:6', 'c:10'), L('d:10', 'd:13', 'green'), W('a:13', 'tn:13')] },
+    { id: 'ammeter', unlock: ['ammeter'],
+      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && ofType(c, 'ammeter').some(p => Math.abs(r.parts[p.id].reading) > 1),
+      solution: [W('tp:2', 'a:2'), X('ammeter', 'b:2', 'b:6'), Rr('c:6', 'c:10'), L('d:10', 'd:13'), W('a:13', 'tn:13')] },
+    { id: 'voltmeter', unlock: ['voltmeter'],
+      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && ofType(c, 'voltmeter').some(p => Math.abs(r.parts[p.id].reading) > 1),
+      solution: [...basic, X('voltmeter', 'e:7', 'e:10')] },
+    { id: 'repair', unlock: [],
+      preset: [W('tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:10', 'c:7', 'blue'), W('a:10', 'tn:10')],
+      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1,
+      solution: [W('tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:7', 'c:10', 'blue'), W('a:10', 'tn:10')] },
+    { id: 'finale', unlock: [],
+      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && ofType(c, 'motor').some(p => r.parts[p.id].spinning) && ofType(c, 'buzzer').some(p => r.parts[p.id].sounding),
+      solution: [W('tp:2', 'a:2'), X('motor', 'b:2', 'b:6'), W('a:6', 'tn:6'), W('tp:9', 'a:9'), Rr('b:9', 'b:13'), L('c:13', 'c:16'), W('a:16', 'tn:16'), W('tp:19', 'a:19'), X('buzzer', 'b:19', 'b:24'), W('a:24', 'tn:24')] },
+  ];
+
+  const ALL_TYPES = Object.keys(PINS);
+  return { COLS, P, X0, ROWY, ROWS, TERM, PINS, LEDVF, holePos, holeNet, allHoles, ldrR, solve, LESSONS, ALL_TYPES, H };
+})();
+if (typeof module !== 'undefined') module.exports = CORE;
+</script>
+<script>(() => {
+const C = CORE, $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const CATS = [
+  ['power', ['wire']],
+  ['passive', ['resistor', 'pot', 'diode']],
+  ['out', ['led', 'bulb', 'buzzer', 'motor']],
+  ['sw', ['button', 'switch']],
+  ['sens', ['ldr']],
+  ['tools', ['ammeter', 'voltmeter']],
+];
+const R_VALUES = [10, 47, 100, 220, 330, 470, 1000, 2200, 4700, 10000];
+const LED_COLORS = { red: '#ff3b3b', green: '#35e06b', blue: '#3d8bff', yellow: '#ffd23b', white: '#f4f7ff' };
+const WIRE_COLORS = { red: '#e8463c', black: '#2b2f36', blue: '#3a7bea', green: '#2fb45a', yellow: '#f2c230', orange: '#f28a30' };
+const BAND = ['#111', '#7b3f00', '#d52b2b', '#f07d1a', '#f4d21c', '#26a641', '#2d5be3', '#8e3fd6', '#8a8a8a', '#f5f5f5'];
+
+/* ---------------- state ---------------- */
+const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const navLang = (navigator.language || 'en').slice(0, 2);
+const S = Object.assign({
+  lang: { sr: 'sr', hr: 'sr', bs: 'sr', mk: 'mk', ro: 'ro', bg: 'bg' }[navLang] || 'en',
+  mode: 'learn', sound: true, light: 0.7, lesson: 0, done: [],
+  boards: { free: { parts: [] }, learn: { parts: [] } }, nextId: 1,
+}, load('rk_state', {}));
+S.tool = 'select'; S.pending = null; S.sel = null; S.sim = false; S.res = null; S.hover = null;
+const hist = { free: { u: [], r: [] }, learn: { u: [], r: [] } };
+const persist = () => store('rk_state', { lang: S.lang, mode: S.mode, sound: S.sound, light: S.light, lesson: S.lesson, done: S.done, boards: S.boards, nextId: S.nextId });
+
+const L = () => I18N[S.lang] || I18N.en;
+const t = (k, v) => { let s = L().ui[k] ?? I18N.en.ui[k] ?? k; if (v) for (const x in v) s = s.replace('{' + x + '}', v[x]); return s; };
+const pn = type => L().parts[type];
+const board = () => S.boards[S.mode];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ---------------- unlocking ---------------- */
+function unlockedTypes() {
+  if (S.mode === 'free') return new Set(C.ALL_TYPES);
+  const s = new Set();
+  for (let i = 0; i <= S.lesson; i++) C.LESSONS[i].unlock.forEach(x => s.add(x));
+  return s;
+}
+const maxLesson = () => { let i = 0; while (i < C.LESSONS.length - 1 && S.done.includes(C.LESSONS[i].id)) i++; return i; };
+
+/* ---------------- history ---------------- */
+function snapshot() { const h = hist[S.mode]; h.u.push(JSON.stringify(board().parts)); if (h.u.length > 80) h.u.shift(); h.r = []; }
+function undo() { const h = hist[S.mode]; if (!h.u.length) return; h.r.push(JSON.stringify(board().parts)); board().parts = JSON.parse(h.u.pop()); S.sel = null; changed(); }
+function redo() { const h = hist[S.mode]; if (!h.r.length) return; h.u.push(JSON.stringify(board().parts)); board().parts = JSON.parse(h.r.pop()); S.sel = null; changed(); }
+
+/* ---------------- sound ---------------- */
+let actx = null, osc = null, gain = null;
+function audio() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); return actx; }
+function beep(f, d = 0.08, v = 0.05, type = 'sine', when = 0) {
+  if (!S.sound || !audio()) return;
+  const o = actx.createOscillator(), g = actx.createGain(), t0 = actx.currentTime + when;
+  o.type = type; o.frequency.value = f; g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+  o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0 + d + 0.02);
+}
+function buzz(level) {
+  if (!S.sound || !S.sim || level <= 0) { if (osc) { try { osc.stop(); } catch (e) {} osc = null; } return; }
+  if (!audio()) return;
+  if (!osc) { osc = actx.createOscillator(); gain = actx.createGain(); osc.type = 'square'; osc.frequency.value = 1400; osc.connect(gain).connect(actx.destination); osc.start(); }
+  gain.gain.setTargetAtTime(0.025 + 0.04 * Math.min(1, level), actx.currentTime, 0.02);
+}
+
+/* ---------------- toast / status ---------------- */
+let toastT = null;
+function toast(msg, kind = '') {
+  const el = $('#toast'); el.innerHTML = msg; el.className = 'show ' + kind;
+  clearTimeout(toastT); toastT = setTimeout(() => (el.className = ''), 3200);
+}
+function status(msg, kind = '') { const el = $('#status'); el.innerHTML = msg || ''; el.className = kind; }
+
+/* ---------------- drawing ---------------- */
+const fmtR = r => r >= 1000 ? (r / 1000).toString().replace('.', ',') + 'k' : String(r);
+function bands(R) {
+  const e = Math.floor(Math.log10(R)) - 1;
+  const d1 = Math.floor(R / Math.pow(10, e + 1)) % 10, d2 = Math.round(R / Math.pow(10, e)) % 10;
+  return [d1, d2, Math.max(0, e)];
+}
+// body in local coords, horizontal, pin0 on the left. st = sim state for part
+function body(type, pr = {}, st = null, sim = false) {
+  const on = sim && st;
+  switch (type) {
+    case 'resistor': {
+      const b = bands(pr.R || 330);
+      return `<rect x="-17" y="-6" width="34" height="12" rx="5" fill="#d9c29a" stroke="#9b8462"/>` +
+        b.map((d, i) => `<rect x="${-10 + i * 6}" y="-6" width="3.2" height="12" fill="${BAND[d]}"/>`).join('') +
+        `<rect x="10" y="-6" width="3" height="12" fill="#c9a43a"/>`;
+    }
+    case 'led': {
+      const col = LED_COLORS[pr.color || 'red'];
+      if (pr.burned) return `<path d="M-9 6 L-9 -2 A9 9 0 0 1 9 -2 L9 6 Z" fill="#444" stroke="#222"/><text x="0" y="4" text-anchor="middle" font-size="10" fill="#bbb">✕</text><circle cx="3" cy="-14" r="4" fill="#888" opacity=".5" class="smoke"/>`;
+      const br = on ? st.bright || 0 : 0;
+      return (br > 0.02 ? `<circle r="${12 + 14 * br}" fill="${col}" opacity="${0.25 + 0.45 * br}" filter="url(#glow)"/>` : '') +
+        `<path d="M-9 6 L-9 -2 A9 9 0 0 1 9 -2 L9 6 Z" fill="${col}" fill-opacity="${0.45 + 0.55 * br}" stroke="${br > 0.02 ? '#fff' : 'rgba(0,0,0,.45)'}" stroke-width="${br > 0.02 ? 1.5 : 1}"/>` +
+        `<rect x="-11" y="5" width="22" height="3" rx="1" fill="${col}" fill-opacity=".8"/>`;
+    }
+    case 'diode':
+      return `<rect x="-12" y="-5" width="24" height="10" rx="2" fill="#1b1b1f" stroke="#555"/><rect x="6" y="-5" width="3.5" height="10" fill="#cfd3da"/>` +
+        (on && st.conducting ? `<rect x="-12" y="-5" width="24" height="10" rx="2" fill="none" stroke="#4ade80" stroke-width="1.2"/>` : '');
+    case 'bulb': {
+      const br = on ? Math.min(1, st.bright || 0) : 0;
+      return (br > 0.05 ? `<circle r="${14 + 16 * br}" fill="#ffe27a" opacity="${0.2 + 0.5 * br}" filter="url(#glow)"/>` : '') +
+        `<rect x="-6" y="6" width="12" height="7" rx="1.5" fill="#9aa0a8"/>` +
+        `<circle cy="-4" r="12" fill="${br > 0.05 ? '#fff3b0' : 'rgba(220,235,255,.25)'}" fill-opacity="${0.35 + 0.65 * br}" stroke="#cdd6e0"/>` +
+        `<path d="M-4 6 L-4 -2 L-2 -6 L0 -2 L2 -6 L4 -2 L4 6" fill="none" stroke="${br > 0.05 ? '#ff9d00' : '#777'}" stroke-width="1.3"/>`;
+    }
+    case 'buzzer': {
+      const s = on && st.sounding;
+      return `<circle r="13" fill="#15161a" stroke="#3a3d45"/><circle r="3" fill="#000" stroke="#333"/>` +
+        (s ? `<g class="waves"><path d="M16 -8 Q21 0 16 8" stroke="#ffd166" fill="none" stroke-width="2"/><path d="M21 -12 Q28 0 21 12" stroke="#ffd166" fill="none" stroke-width="2"/></g>` : '');
+    }
+    case 'motor': {
+      const sp = on ? st.speed || 0 : 0, spin = on && st.spinning;
+      const dur = spin ? Math.max(0.12, 0.9 / Math.min(2, Math.abs(sp))) : 0;
+      return `<rect x="-14" y="-12" width="28" height="24" rx="5" fill="#8a929e" stroke="#59606b"/>` +
+        `<text x="0" y="4" font-size="11" font-weight="800" fill="#2a2e35" text-anchor="middle">M</text>` +
+        `<g transform="translate(0,-20)"><g class="${spin ? 'spin' : ''}" style="animation-duration:${dur}s;animation-direction:${sp < 0 ? 'reverse' : 'normal'}">` +
+        `<ellipse rx="13" ry="3.2" fill="#ff7a33"/><ellipse rx="3.2" ry="13" fill="#ffb37a"/><circle r="2.5" fill="#333"/></g></g>`;
+    }
+    case 'button': {
+      const p = pr.pressed;
+      return `<rect x="-11" y="-11" width="22" height="22" rx="3" fill="#2a2d33" stroke="#555"/>` +
+        `<circle r="${p ? 6 : 7}" fill="${p ? '#e05252' : '#ff6b6b'}" stroke="${p ? '#fff' : '#922'}" stroke-width="${p ? 1.5 : 1}"/>`;
+    }
+    case 'switch': {
+      const o = pr.on;
+      return `<rect x="-15" y="-7" width="30" height="14" rx="3" fill="#2b4f7c" stroke="#1b3354"/>` +
+        `<rect x="${o ? 1 : -13}" y="-5" width="12" height="10" rx="2" fill="${o ? '#4ade80' : '#d8dde5'}"/>` +
+        `<text x="0" y="-11" font-size="8" fill="${o ? '#4ade80' : '#9aa3af'}" text-anchor="middle" font-weight="700">${o ? 'ON' : 'OFF'}</text>`;
+    }
+    case 'ldr':
+      return `<circle r="10" fill="#c8813b" stroke="#7d4d1e"/><path d="M-6 -3 H4 V0 H-4 V3 H6" fill="none" stroke="#5a2e0b" stroke-width="1.6"/>`;
+    case 'ammeter': case 'voltmeter': {
+      const u = type === 'ammeter' ? 'A' : 'V';
+      let txt = '-- ' + (u === 'A' ? 'mA' : 'V');
+      if (on && st.reading !== undefined) txt = u === 'A' ? st.reading.toFixed(Math.abs(st.reading) < 10 ? 2 : 1) + ' mA' : st.reading.toFixed(2) + ' V';
+      return `<rect x="-26" y="-15" width="52" height="30" rx="6" fill="${u === 'A' ? '#f2b53a' : '#3ab0f2'}" stroke="#222"/>` +
+        `<rect x="-21" y="-11" width="42" height="14" rx="2" fill="#bfe3b4"/><text x="0" y="0" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="middle" fill="#1d2b18">${txt}</text>` +
+        `<text x="0" y="12" font-size="8" font-weight="800" text-anchor="middle" fill="#222">${u}</text>`;
+    }
+  }
+  return '';
+}
+
+function icon(type) {
+  let inner;
+  if (type === 'wire') inner = `<path d="M-26 8 Q0 -14 26 8" stroke="#e8463c" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  else if (type === 'pot') inner = potBody({ pos: 0.5 }, 0.62);
+  else inner = `<line x1="-28" x2="28" stroke="#b8bec8" stroke-width="2"/><g transform="scale(${type === 'ammeter' || type === 'voltmeter' ? 0.75 : 1})">${body(type, { R: 330, color: 'red' })}</g>`;
+  return `<svg viewBox="-30 -24 60 40" class="ico">${inner}</svg>`;
+}
+function potBody(pr, s = 1) {
+  const a = -135 + 270 * (pr.pos ?? 0.5);
+  return `<g transform="scale(${s})"><rect x="-26" y="-20" width="52" height="26" rx="4" fill="#2f63b8" stroke="#1d3f78"/>` +
+    `<circle cx="0" cy="-7" r="10" fill="#e9ecf1" stroke="#9aa3af"/><line x1="0" y1="-7" x2="${(Math.sin(a * Math.PI / 180) * 9).toFixed(2)}" y2="${(-7 - Math.cos(a * Math.PI / 180) * 9).toFixed(2)}" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>` +
+    `<line x1="-22" y1="6" x2="-22" y2="${s === 1 ? 0 : 14}" stroke="#b8bec8" stroke-width="2"/><line x1="0" y1="6" x2="0" y2="${s === 1 ? 0 : 14}" stroke="#b8bec8" stroke-width="2"/><line x1="22" y1="6" x2="22" y2="${s === 1 ? 0 : 14}" stroke="#b8bec8" stroke-width="2"/></g>`;
+}
+
+function buildBoard() {
+  const svg = $('#board');
+  const W = C.X0 + (C.COLS - 1) * C.P + 30;
+  svg.setAttribute('viewBox', `0 0 ${W} 440`);
+  let h = `<defs><filter id="glow" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="5"/></filter></defs>`;
+  const x0 = C.X0 - 22, x1 = C.X0 + (C.COLS - 1) * C.P + 22;
+  h += `<rect x="${x0}" y="18" width="${x1 - x0}" height="410" rx="10" fill="#e9e6dd" stroke="#bdb8aa"/>`;
+  h += `<rect x="${x0}" y="219" width="${x1 - x0}" height="12" fill="#d6d2c6"/>`;
+  for (const [r, col, sign] of [['tp', '#d93a3a', '+'], ['tn', '#2f6fd6', '−'], ['bp', '#d93a3a', '+'], ['bn', '#2f6fd6', '−']]) {
+    const y = C.ROWY[r] + (r.endsWith('p') ? -11 : 11);
+    h += `<line x1="${x0 + 14}" x2="${x1 - 14}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="2"/>`;
+    h += `<text x="${x0 + 7}" y="${C.ROWY[r] + 4}" font-size="13" font-weight="800" fill="${col}" text-anchor="middle">${sign}</text>`;
+    h += `<text x="${x1 - 7}" y="${C.ROWY[r] + 4}" font-size="13" font-weight="800" fill="${col}" text-anchor="middle">${sign}</text>`;
+  }
+  for (const r of C.TERM) { const y = C.ROWY[r] + 4; h += `<text x="${x0 + 9}" y="${y}" class="lbl">${r}</text><text x="${x1 - 9}" y="${y}" class="lbl">${r}</text>`; }
+  for (let c = 0; c < C.COLS; c++) { const x = C.X0 + c * C.P; if ((c + 1) % 5 === 0 || c === 0) { h += `<text x="${x}" y="92" class="lbl">${c + 1}</text><text x="${x}" y="362" class="lbl">${c + 1}</text>`; } }
+  for (const hole of C.allHoles()) { const p = C.holePos(hole); h += `<rect x="${p.x - 3.5}" y="${p.y - 3.5}" width="7" height="7" rx="1.5" class="hole"/>`; }
+  // battery
+  h += `<g id="battery"><rect x="14" y="30" width="56" height="96" rx="7" fill="#1f2937" stroke="#0b1220"/><rect x="14" y="30" width="56" height="34" rx="7" fill="#ff7a33"/>` +
+    `<rect x="26" y="20" width="10" height="11" rx="2" fill="#c0c6cf"/><rect x="48" y="20" width="10" height="11" rx="2" fill="#c0c6cf"/>` +
+    `<text x="31" y="17" font-size="12" font-weight="800" fill="#e8463c" text-anchor="middle">+</text><text x="53" y="17" font-size="13" font-weight="800" fill="#6aa0ff" text-anchor="middle">−</text>` +
+    `<text x="42" y="98" font-size="20" font-weight="800" fill="#fff" text-anchor="middle">9V</text></g>`;
+  h += `<path d="M31 20 C31 0, 70 ${C.ROWY.tp}, ${x0 + 1} ${C.ROWY.tp}" stroke="#e8463c" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  h += `<path d="M53 20 C53 6, 76 ${C.ROWY.tn}, ${x0 + 1} ${C.ROWY.tn}" stroke="#2b2f36" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  h += `<g id="parts"></g><g id="overlay"></g>`;
+  svg.innerHTML = h;
+}
+
+function wirePath(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+  const bow = Math.min(26, len * 0.18);
+  const mx = (a.x + b.x) / 2 + (-dy / len) * bow * (dx >= 0 ? 1 : -1), my = (a.y + b.y) / 2 - Math.abs(dx / len) * bow - (Math.abs(dx) < 1 ? 0 : 0);
+  return `M${a.x} ${a.y} Q${mx.toFixed(1)} ${my.toFixed(1)} ${b.x} ${b.y}`;
+}
+
+function renderParts() {
+  const g = $('#parts'); if (!g) return;
+  const sim = S.sim, res = S.res;
+  let h = '';
+  const parts = [...board().parts].sort((a, b) => (b.type === 'wire') - (a.type === 'wire'));
+  for (const p of parts) {
+    const st = res && res.parts[p.id];
+    const P = p.pins.map(C.holePos);
+    const sel = S.sel === p.id ? ' sel' : '';
+    const clickable = sim && (p.type === 'button' || p.type === 'switch') ? ' act' : '';
+    h += `<g class="part${sel}${clickable}" data-id="${p.id}"><title>${esc(pn(p.type))}${p.type === 'resistor' ? ' ' + fmtR(p.props.R) + 'Ω' : ''}</title>`;
+    if (p.type === 'wire') {
+      const d = wirePath(P[0], P[1]), col = WIRE_COLORS[p.props.color || 'red'];
+      h += `<path d="${d}" class="hit" />`;
+      if (sel) h += `<path d="${d}" stroke="#ffd166" stroke-width="10" fill="none" stroke-linecap="round" opacity=".6"/>`;
+      h += `<path d="${d}" stroke="${col}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+      h += `<path d="${d}" stroke="rgba(255,255,255,.35)" stroke-width="1.5" fill="none" stroke-linecap="round" transform="translate(-1,-1)"/>`;
+      if (sim && st && Math.abs(st.I) > 0.0005) {
+        const dur = Math.max(0.25, Math.min(3, 0.02 / Math.abs(st.I)));
+        h += `<path d="${d}" class="flow" style="animation-duration:${dur.toFixed(2)}s;animation-direction:${st.I > 0 ? 'normal' : 'reverse'}"/>`;
+      }
+    } else if (p.type === 'pot') {
+      const a = P[0], c = P[2];
+      h += `<g transform="translate(${(a.x + c.x) / 2},${a.y - 6})">${sel ? '<rect x="-31" y="-26" width="62" height="38" rx="6" fill="none" stroke="#ffd166" stroke-width="3"/>' : ''}${potBody(p.props)}</g>`;
+    } else {
+      const a = P[0], b = P[1];
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      let ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+      h += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="hit"/>`;
+      h += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#b8bec8" stroke-width="2.4"/>`;
+      const meter = p.type === 'ammeter' || p.type === 'voltmeter';
+      const upright = ['ammeter', 'voltmeter', 'button', 'motor', 'bulb', 'led', 'buzzer', 'switch', 'ldr'].includes(p.type);
+      const rot = upright ? '' : `rotate(${ang})`;
+      h += `<g transform="translate(${mx},${my}) ${rot}">${sel ? `<circle r="${meter ? 30 : 20}" fill="none" stroke="#ffd166" stroke-width="3" stroke-dasharray="4 3"/>` : ''}${body(p.type, p.props, st, sim)}</g>`;
+      if (['led', 'buzzer', 'ammeter', 'voltmeter'].includes(p.type)) h += `<text x="${a.x - 7}" y="${a.y - 6}" class="plus">+</text>`;
+      if (p.type === 'resistor') h += `<text x="${mx}" y="${my - 11}" class="rv">${fmtR(p.props.R)}Ω</text>`;
+    }
+    for (const q of P) h += `<circle cx="${q.x}" cy="${q.y}" r="2.6" fill="#5c6370"/>`;
+    h += `</g>`;
+  }
+  g.innerHTML = h;
+}
+
+/* ---------------- simulation ---------------- */
+function simulate() {
+  if (!S.sim) { S.res = null; buzz(0); return; }
+  const c = board();
+  let r = C.solve(c, { light: S.light });
+  let burnt = false;
+  for (const p of c.parts) if (p.type === 'led' && r.parts[p.id] && r.parts[p.id].burn && !p.props.burned) { p.props.burned = true; burnt = true; }
+  if (burnt) { r = C.solve(c, { light: S.light }); beep(180, 0.35, 0.08, 'sawtooth'); toast(t('burned'), 'bad'); }
+  S.res = r;
+  let lvl = 0;
+  for (const p of c.parts) if (p.type === 'buzzer' && r.parts[p.id].sounding) lvl = Math.max(lvl, r.parts[p.id].I / 0.03);
+  buzz(lvl);
+  if (r.short) status(t('short'), 'bad');
+  else if (c.parts.some(p => p.props.burned)) status(t('burned'), 'bad');
+  else if (!r.flowing && c.parts.length) status(t('noPower'), 'warn');
+  else status(t('simOn'), 'ok');
+  // lesson check
+  if (S.mode === 'learn') {
+    const les = C.LESSONS[S.lesson];
+    if (!S.celebrated && les.check(c, (cc, o) => C.solve(cc, Object.assign({ light: S.light }, o)), r)) {
+      S.celebrated = true;
+      if (!S.done.includes(les.id)) S.done.push(les.id);
+      persist();
+      setTimeout(celebrate, 450);
+    }
+  }
+}
+
+/* ---------------- render UI ---------------- */
+function renderPalette() {
+  const un = unlockedTypes();
+  let h = '';
+  for (const [cat, types] of CATS) {
+    h += `<div class="cat">${esc(L().cats[cat])}</div><div class="grid">`;
+    for (const ty of types) {
+      const lk = !un.has(ty);
+      h += `<button class="pal${S.tool === ty ? ' on' : ''}${lk ? ' locked' : ''}" data-type="${ty}" title="${esc(pn(ty))}">` +
+        `${lk ? '<span class="lk">🔒</span>' : ''}<span class="info" data-info="${ty}">i</span>${icon(ty)}<span class="pl">${esc(pn(ty))}</span></button>`;
+    }
+    h += `</div>`;
+  }
+  $('#palette').innerHTML = h;
+}
+
+function renderProps() {
+  const el = $('#props');
+  const p = board().parts.find(x => x.id === S.sel);
+  if (!p) { el.innerHTML = `<h3>${esc(t('props'))}</h3><p class="muted">${esc(t('noSelection'))}</p>`; return; }
+  const st = S.res && S.res.parts[p.id];
+  let h = `<h3>${icon(p.type)} ${esc(pn(p.type))}</h3><p class="muted small">${esc(L().info[p.type])}</p>`;
+  if (p.type === 'resistor') h += `<label>${esc(t('value'))}<select data-prop="R">${R_VALUES.map(v => `<option value="${v}"${v === p.props.R ? ' selected' : ''}>${fmtR(v)} Ω</option>`).join('')}</select></label>`;
+  if (p.type === 'led') h += `<label>${esc(t('color'))}<div class="swatches">${Object.keys(LED_COLORS).map(k => `<button data-color="${k}" title="${esc(L().colors[k])}" class="sw${p.props.color === k ? ' on' : ''}" style="background:${LED_COLORS[k]}"></button>`).join('')}</div></label>` + (p.props.burned ? `<p class="bad small">💥 ${esc(t('burnedLabel'))}</p>` : '');
+  if (p.type === 'wire') h += `<label>${esc(t('color'))}<div class="swatches">${Object.keys(WIRE_COLORS).map(k => `<button data-color="${k}" title="${esc(L().colors[k])}" class="sw${(p.props.color || 'red') === k ? ' on' : ''}" style="background:${WIRE_COLORS[k]}"></button>`).join('')}</div></label>`;
+  if (p.type === 'pot') h += `<label>${esc(t('position'))} <b id="potv">${Math.round((p.props.pos ?? 0.5) * 100)}%</b><input type="range" min="0" max="100" value="${Math.round((p.props.pos ?? 0.5) * 100)}" data-prop="pos"></label>`;
+  if (p.type === 'switch') h += `<label>${esc(t('state'))}<button class="btn small tog" data-toggle="on">${p.props.on ? '🟢 ' + esc(t('on')) : '⚪ ' + esc(t('off'))}</button></label>`;
+  if (st && S.sim) {
+    const I = p.type === 'pot' ? Math.max(Math.abs(st.Iaw || 0), Math.abs(st.Iwb || 0)) : Math.abs(st.I || 0);
+    h += `<div class="meas"><span>${esc(t('current'))}: <b>${(I * 1000).toFixed(1)} mA</b></span>` + (p.type !== 'pot' ? `<span>${esc(t('voltage'))}: <b>${Math.abs(st.V || 0).toFixed(2)} V</b></span>` : '') + `</div>`;
+  }
+  h += `<button class="btn danger small" id="delSel">🗑 ${esc(t('del'))}</button>`;
+  el.innerHTML = h;
+}
+
+function renderLesson() {
+  const el = $('#lesson'), ban = $('#banner');
+  if (S.mode !== 'learn') {
+    el.innerHTML = `<h3>💡 ${esc(t('help'))}</h3><ul class="help">${t('helpItems').map(x => `<li>${x}</li>`).join('')}</ul>`;
+    ban.innerHTML = `<span class="bt">🎮 ${esc(t('free'))}</span><span class="bs">${esc(t('subtitle'))}</span>`;
+    return;
+  }
+  const i = S.lesson, les = L().lessons[i], done = S.done.includes(C.LESSONS[i].id);
+  ban.innerHTML = `<span class="bt">🎓 ${esc(t('level'))} ${i + 1}: ${esc(les.t)} ${done ? '<span class="donechip">✓ ' + esc(t('done')) + '</span>' : ''}</span>` +
+    `<button class="btn small ghost" id="openLessons">📚 ${esc(t('lessons'))} (${S.done.length}/${C.LESSONS.length})</button>`;
+  let h = `<h3 class="lt">🎓 ${esc(les.t)}</h3><p>${esc(les.d)}</p><ol class="steps">`;
+  les.s.forEach((s, k) => h += `<li><span class="stepn">${esc(t('step'))} ${k + 1}</span><span>${s}</span></li>`);
+  h += `</ol><p class="foot">${t('lessonFooter')}</p>`;
+  const nu = C.LESSONS[i].unlock;
+  if (nu.length) h += `<div class="newparts">${nu.map(x => `<span>${icon(x)}${esc(pn(x))}</span>`).join('')}</div>`;
+  h += `<div class="row"><button class="btn small ghost" id="solution">💡 ${esc(t('showSolution'))}</button><button class="btn small ghost" id="restart">↺ ${esc(t('resetLesson'))}</button></div>`;
+  el.innerHTML = h;
+}
+
+function renderToolbar() {
+  $('#simBtn').innerHTML = S.sim ? '■ ' + esc(t('stop')) : '▶ ' + esc(t('simulate'));
+  $('#simBtn').classList.toggle('running', S.sim);
+  $('#selBtn').classList.toggle('on', S.tool === 'select');
+  $('#modeFree').classList.toggle('on', S.mode === 'free');
+  $('#modeLearn').classList.toggle('on', S.mode === 'learn');
+  $('#undoBtn').disabled = !hist[S.mode].u.length;
+  $('#redoBtn').disabled = !hist[S.mode].r.length;
+  $('#soundBtn').innerHTML = (S.sound ? '🔊 ' : '🔇 ') + esc(t('sound'));
+  const hasLdr = board().parts.some(p => p.type === 'ldr');
+  $('#lightBox').hidden = !hasLdr;
+  $('#lightVal').textContent = Math.round(S.light * 100) + '%';
+  $('#lightRange').value = Math.round(S.light * 100);
+}
+
+function renderTexts() {
+  document.documentElement.lang = L().html;
+  document.title = t('title');
+  document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll('[data-tt]').forEach(el => el.title = t(el.dataset.tt));
+  $('#lang').value = S.lang;
+}
+function renderAll() { renderTexts(); renderPalette(); renderProps(); renderLesson(); renderToolbar(); renderParts(); }
+function changed(opts = {}) { if (S.sim) simulate(); renderParts(); renderProps(); renderToolbar(); if (opts.palette) renderPalette(); persist(); }
+
+/* ---------------- placement ---------------- */
+function occupied() { const m = {}; for (const p of board().parts) for (const h of p.pins) m[h] = p.id; return m; }
+function nearestHole(x, y) {
+  let best = null, bd = 12;
+  for (const h of C.allHoles()) { const p = C.holePos(h); const d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; best = h; } }
+  return best;
+}
+function svgPoint(ev) {
+  const svg = $('#board'), pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+function hint() {
+  if (S.tool === 'select') return;
+  if (S.tool === 'pot') status(t('pickPot'));
+  else status(S.pending ? t('pickSecond') : t('pickFirst', { part: '<b>' + esc(pn(S.tool)) + '</b>' }));
+}
+function addPart(type, pins, props = {}) {
+  snapshot();
+  const p = { id: 'p' + (S.nextId++), type, pins, props };
+  if (type === 'resistor') p.props.R = props.R || 330;
+  if (type === 'led') p.props.color = props.color || 'red';
+  if (type === 'pot') p.props.pos = props.pos ?? 0.5;
+  if (type === 'wire' && !props.color) {
+    const nets = pins.map(C.holeNet);
+    p.props.color = nets.includes('tn') || nets.includes('bn') ? 'black' : nets.includes('tp') || nets.includes('bp') ? 'red' : ['blue', 'green', 'yellow', 'orange'][S.nextId % 4];
+  }
+  board().parts.push(p);
+  beep(660, 0.05, 0.04);
+  return p;
+}
+function clickHole(h) {
+  const occ = occupied();
+  if (S.tool === 'pot') {
+    const [r, c] = h.split(':');
+    if (!C.TERM.includes(r) || +c + 2 >= C.COLS) { toast(t('potBad'), 'warn'); return; }
+    const pins = [0, 1, 2].map(k => r + ':' + (+c + k));
+    if (pins.some(x => occ[x])) { toast(t('occupied'), 'warn'); return; }
+    addPart('pot', pins); changed(); return;
+  }
+  if (occ[h]) { toast(t('occupied'), 'warn'); return; }
+  if (!S.pending) { S.pending = h; beep(520, 0.04, 0.03); drawOverlay(); hint(); return; }
+  if (S.pending === h) { toast(t('sameHole'), 'warn'); return; }
+  addPart(S.tool, [S.pending, h]);
+  S.pending = null; drawOverlay(); hint(); changed();
+}
+function drawOverlay() {
+  const g = $('#overlay'); if (!g) return;
+  let h = '';
+  if (S.hover && S.tool !== 'select') {
+    const p = C.holePos(S.hover);
+    if (S.tool === 'pot') { const [r, c] = S.hover.split(':'); for (let k = 0; k < 3; k++) { const q = C.holePos(r + ':' + Math.min(C.COLS - 1, +c + k)); h += `<circle cx="${q.x}" cy="${q.y}" r="7" class="hov"/>`; } }
+    else h += `<circle cx="${p.x}" cy="${p.y}" r="7" class="hov"/>`;
+    // highlight connected holes of this net
+    const net = C.holeNet(S.hover);
+    if (net.length > 2) for (const x of C.allHoles()) if (C.holeNet(x) === net && x !== S.hover) { const q = C.holePos(x); h += `<circle cx="${q.x}" cy="${q.y}" r="5" class="hov2"/>`; }
+  }
+  if (S.pending) {
+    const a = C.holePos(S.pending);
+    h += `<circle cx="${a.x}" cy="${a.y}" r="7" class="pend"/>`;
+    if (S.hover) { const b = C.holePos(S.hover); h += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="ghost"/>`; }
+  }
+  g.innerHTML = h;
+}
+
+function setTool(tool) {
+  S.tool = tool; S.pending = null;
+  if (tool !== 'select') S.sel = null;
+  renderPalette(); renderToolbar(); renderProps(); drawOverlay(); renderParts();
+  if (tool === 'select') status(S.sim ? t('simOn') : ''); else hint();
+}
+function deleteSel() {
+  const b = board(); const i = b.parts.findIndex(p => p.id === S.sel); if (i < 0) return;
+  snapshot(); b.parts.splice(i, 1); S.sel = null; beep(300, 0.06, 0.04); changed();
+}
+
+/* ---------------- modals ---------------- */
+function modal(html, cls = '') {
+  const m = $('#modal'); m.innerHTML = `<div class="mbox ${cls}"><button class="x" data-close>✕</button>${html}</div>`; m.hidden = false;
+}
+const closeModal = () => { $('#modal').hidden = true; $('#modal').innerHTML = ''; };
+
+function celebrate() {
+  const i = S.lesson, les = L().lessons[i], next = i + 1 < C.LESSONS.length ? C.LESSONS[i + 1] : null;
+  [523, 659, 784, 1047].forEach((f, k) => beep(f, 0.18, 0.06, 'triangle', k * 0.12));
+  confetti();
+  let h = `<div class="cel">🎉</div><h2>${esc(t('lessonDone'))}</h2><p class="big">${esc(t('level'))} ${i + 1}: ${esc(les.t)}</p>`;
+  if (next && next.unlock.length) h += `<p>${esc(t('unlockedParts'))}</p><div class="newparts">${next.unlock.map(x => `<span>${icon(x)}${esc(pn(x))}</span>`).join('')}</div>`;
+  if (!next) h += `<p class="big">${esc(t('allDone'))}</p>`;
+  h += `<div class="row center">` + (next ? `<button class="btn primary" id="goNext">${esc(t('nextLesson'))} →</button>` : '') + `<button class="btn ghost" data-close>${esc(t('stay'))}</button></div>`;
+  modal(h, 'center');
+}
+function confetti() {
+  const box = $('#confetti'); box.innerHTML = '';
+  const cols = ['#ff7a33', '#2dd4bf', '#ffd166', '#ef476f', '#7aa2ff', '#4ade80'];
+  for (let k = 0; k < 90; k++) {
+    const s = document.createElement('i');
+    s.style.left = Math.random() * 100 + 'vw'; s.style.background = cols[k % cols.length];
+    s.style.animationDelay = Math.random() * 0.6 + 's'; s.style.animationDuration = 1.6 + Math.random() * 1.4 + 's';
+    s.style.transform = `rotate(${Math.random() * 360}deg)`;
+    box.appendChild(s);
+  }
+  setTimeout(() => (box.innerHTML = ''), 3600);
+}
+function lessonsModal() {
+  const mx = maxLesson();
+  let h = `<h2>📚 ${esc(t('lessons'))}</h2><div class="llist">`;
+  C.LESSONS.forEach((les, i) => {
+    const done = S.done.includes(les.id), open = i <= mx || done;
+    h += `<button class="lrow${i === S.lesson ? ' cur' : ''}" ${open ? `data-lesson="${i}"` : 'disabled'}><span class="ln">${i + 1}</span><span class="lname">${esc(L().lessons[i].t)}</span><span class="ls">${done ? '✅' : open ? '▶' : '🔒'}</span></button>`;
+  });
+  modal(h + '</div>');
+}
+function startLesson(i, preset = true) {
+  S.lesson = i; S.celebrated = false; S.sel = null; S.pending = null;
+  const les = C.LESSONS[i];
+  S.boards.learn = { parts: [] }; hist.learn = { u: [], r: [] };
+  if (preset && les.preset) les.preset.forEach(p => addPart(p.type, [...p.pins], { ...p.props }));
+  hist.learn = { u: [], r: [] };
+  setSim(false); S.tool = 'select';
+  renderAll(); persist(); closeModal();
+}
+function showSolution() {
+  const les = C.LESSONS[S.lesson];
+  snapshot();
+  board().parts = [];
+  const h = hist[S.mode].u.slice();
+  les.solution.forEach(p => addPart(p.type, [...p.pins], { ...p.props }));
+  hist[S.mode].u = h;
+  S.sel = null; changed(); toast(t('solutionLoaded'), 'ok');
+}
+function savedList() { return load('rk_saved', []); }
+function circuitsModal() {
+  const list = savedList();
+  const code = btoa(unescape(encodeURIComponent(JSON.stringify({ v: 1, parts: board().parts.map(({ type, pins, props }) => ({ type, pins, props })) }))));
+  let h = `<h2>💾 ${esc(t('myCircuits'))}</h2>
+    <div class="row"><input id="cname" placeholder="${esc(t('name'))}" value="${esc(t('defaultName'))} ${list.length + 1}"><button class="btn primary small" id="doSave">💾 ${esc(t('save'))}</button></div>
+    <div class="clist">${list.length ? list.map((c, i) => `<div class="crow"><span>${esc(c.name)}<small>${new Date(c.date).toLocaleDateString(L().html)} · ${c.parts.length}</small></span><button class="btn small" data-loadc="${i}">${esc(t('load'))}</button><button class="btn small danger" data-delc="${i}">🗑</button></div>`).join('') : `<p class="muted">${esc(t('empty'))}</p>`}</div>
+    <label>${esc(t('exportCode'))}<textarea id="ecode" readonly rows="3">${code}</textarea></label><button class="btn small" id="copyCode">📋 ${esc(t('copy'))}</button>
+    <label>${esc(t('importLabel'))}<textarea id="icode" rows="3"></textarea></label><button class="btn small" id="doImport">⬆ ${esc(t('importBtn'))}</button>`;
+  modal(h);
+}
+function loadParts(parts) {
+  snapshot();
+  const h = hist[S.mode].u.slice();
+  board().parts = [];
+  for (const p of parts) {
+    if (!C.PINS[p.type] || !Array.isArray(p.pins) || p.pins.length !== C.PINS[p.type]) continue;
+    if (!p.pins.every(x => typeof x === 'string' && C.holePos(x).y !== undefined && !isNaN(C.holePos(x).x))) continue;
+    addPart(p.type, [...p.pins], { ...(p.props || {}) });
+  }
+  hist[S.mode].u = h;
+  S.sel = null; changed({ palette: true });
+}
+
+function setSim(on) {
+  S.sim = on;
+  if (on) { audio(); for (const p of board().parts) if (p.type === 'button') p.props.pressed = false; }
+  simulate();
+  if (!on) { status(''); buzz(0); }
+  renderParts(); renderProps(); renderToolbar();
+}
+
+/* ---------------- events ---------------- */
+function bind() {
+  $('#lang').innerHTML = Object.keys(I18N).map(k => `<option value="${k}">${I18N[k].flag} ${I18N[k].name}</option>`).join('');
+  $('#lang').onchange = e => { S.lang = e.target.value; persist(); renderAll(); if (S.sim) simulate(); };
+  $('#simBtn').onclick = () => { setSim(!S.sim); beep(S.sim ? 880 : 440, 0.07, 0.04); };
+  $('#selBtn').onclick = () => setTool('select');
+  $('#undoBtn').onclick = undo; $('#redoBtn').onclick = redo;
+  $('#soundBtn').onclick = () => { S.sound = !S.sound; if (!S.sound) buzz(0); else simulate(); persist(); renderToolbar(); };
+  $('#helpBtn').onclick = () => modal(`<h2>❓ ${esc(t('help'))}</h2><ul class="help">${t('helpItems').map(x => `<li>${x}</li>`).join('')}</ul>`);
+  $('#saveBtn').onclick = circuitsModal;
+  $('#clearBtn').onclick = () => modal(`<h2>🗑 ${esc(t('clear'))}</h2><p>${esc(t('confirmClear'))}</p><div class="row center"><button class="btn danger" id="doClear">${esc(t('yes'))}</button><button class="btn ghost" data-close>${esc(t('no'))}</button></div>`, 'center');
+  $('#modeFree').onclick = () => { if (S.mode === 'free') return; S.mode = 'free'; S.sel = null; S.pending = null; setSim(false); S.tool = 'select'; renderAll(); persist(); };
+  $('#modeLearn').onclick = () => { if (S.mode === 'learn') return; S.mode = 'learn'; S.sel = null; S.pending = null; setSim(false); S.tool = 'select'; S.celebrated = S.done.includes(C.LESSONS[S.lesson].id); renderAll(); persist(); };
+  $('#lightRange').oninput = e => { S.light = e.target.value / 100; $('#lightVal').textContent = e.target.value + '%'; if (S.sim) { simulate(); renderParts(); renderProps(); } persist(); };
+
+  $('#palette').addEventListener('click', e => {
+    const inf = e.target.closest('[data-info]');
+    if (inf) { e.stopPropagation(); const ty = inf.dataset.info; modal(`<h2>${icon(ty)} ${esc(pn(ty))}</h2><p>${esc(L().info[ty])}</p>`); return; }
+    const b = e.target.closest('[data-type]'); if (!b) return;
+    if (b.classList.contains('locked')) { toast(t('locked'), 'warn'); return; }
+    setTool(S.tool === b.dataset.type ? 'select' : b.dataset.type);
+  });
+  $('#props').addEventListener('change', e => {
+    const p = board().parts.find(x => x.id === S.sel); if (!p) return;
+    if (e.target.dataset.prop === 'R') { snapshot(); p.props.R = +e.target.value; changed(); }
+    if (e.target.dataset.prop === 'pos') { snapshot(); p.props.pos = e.target.value / 100; changed(); }
+  });
+  $('#props').addEventListener('input', e => {
+    const p = board().parts.find(x => x.id === S.sel); if (!p || e.target.dataset.prop !== 'pos') return;
+    p.props.pos = e.target.value / 100; $('#potv').textContent = e.target.value + '%';
+    if (S.sim) simulate(); renderParts();
+  });
+  $('#props').addEventListener('click', e => {
+    const p = board().parts.find(x => x.id === S.sel); if (!p) return;
+    if (e.target.closest('#delSel')) return deleteSel();
+    const c = e.target.closest('[data-color]');
+    if (c) { snapshot(); p.props.color = c.dataset.color; if (p.type === 'led') p.props.burned = false; changed(); }
+    if (e.target.closest('[data-toggle]')) { snapshot(); p.props.on = !p.props.on; beep(p.props.on ? 900 : 600, 0.04, 0.04); changed(); }
+  });
+  $('#lesson').addEventListener('click', e => {
+    if (e.target.closest('#solution')) showSolution();
+    if (e.target.closest('#restart')) startLesson(S.lesson);
+  });
+  $('#banner').addEventListener('click', e => { if (e.target.closest('#openLessons')) lessonsModal(); });
+  $('#modal').addEventListener('click', e => {
+    if (e.target === $('#modal') || e.target.closest('[data-close]')) return closeModal();
+    const l = e.target.closest('[data-lesson]'); if (l) return startLesson(+l.dataset.lesson);
+    if (e.target.closest('#goNext')) return startLesson(S.lesson + 1);
+    if (e.target.closest('#doClear')) { snapshot(); board().parts = []; S.sel = null; closeModal(); changed(); return; }
+    if (e.target.closest('#doSave')) { const list = savedList(); list.unshift({ name: $('#cname').value.trim() || t('defaultName'), date: Date.now(), parts: board().parts.map(({ type, pins, props }) => ({ type, pins, props })) }); store('rk_saved', list.slice(0, 40)); toast(t('saved'), 'ok'); circuitsModal(); return; }
+    const lc = e.target.closest('[data-loadc]'); if (lc) { loadParts(savedList()[+lc.dataset.loadc].parts); closeModal(); toast(t('loaded'), 'ok'); return; }
+    const dc = e.target.closest('[data-delc]'); if (dc) { const list = savedList(); list.splice(+dc.dataset.delc, 1); store('rk_saved', list); circuitsModal(); return; }
+    if (e.target.closest('#copyCode')) { const ta = $('#ecode'); ta.select(); try { navigator.clipboard.writeText(ta.value).then(() => toast(t('copied'), 'ok'), () => { document.execCommand('copy'); toast(t('copied'), 'ok'); }); } catch (err) { document.execCommand('copy'); toast(t('copied'), 'ok'); } return; }
+    if (e.target.closest('#doImport')) {
+      try { const d = JSON.parse(decodeURIComponent(escape(atob($('#icode').value.trim())))); if (!Array.isArray(d.parts)) throw 0; loadParts(d.parts); closeModal(); toast(t('loaded'), 'ok'); }
+      catch (err) { toast(t('importBad'), 'bad'); }
+    }
+  });
+
+  const svg = $('#board');
+  let pressedBtn = null;
+  svg.addEventListener('pointermove', e => {
+    if (S.tool === 'select') { if (S.hover) { S.hover = null; drawOverlay(); } return; }
+    const p = svgPoint(e); const h = nearestHole(p.x, p.y);
+    if (h !== S.hover) { S.hover = h; drawOverlay(); }
+  });
+  svg.addEventListener('pointerleave', () => { S.hover = null; drawOverlay(); });
+  svg.addEventListener('pointerdown', e => {
+    audio();
+    const g = e.target.closest('.part');
+    const part = g && board().parts.find(x => x.id === g.dataset.id);
+    if (S.sim && part && (part.type === 'button' || part.type === 'switch')) {
+      e.preventDefault();
+      if (part.type === 'button') { part.props.pressed = true; pressedBtn = part; beep(900, 0.03, 0.03); try { svg.setPointerCapture(e.pointerId); } catch (er) {} }
+      else { part.props.on = !part.props.on; beep(part.props.on ? 900 : 600, 0.04, 0.04); }
+      if (S.sel !== part.id && S.tool === 'select') S.sel = part.id;
+      changed(); return;
+    }
+    if (S.tool !== 'select') {
+      const p = svgPoint(e); const h = nearestHole(p.x, p.y);
+      if (h) { e.preventDefault(); S.hover = h; clickHole(h); }
+      return;
+    }
+    S.sel = part ? part.id : null;
+    renderParts(); renderProps();
+  });
+  const release = () => { if (pressedBtn) { pressedBtn.props.pressed = false; pressedBtn = null; changed(); } };
+  svg.addEventListener('pointerup', release); svg.addEventListener('pointercancel', release);
+  window.addEventListener('keydown', e => {
+    if (/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) return;
+    if (e.key === 'Escape') { if (!$('#modal').hidden) closeModal(); else if (S.pending) { S.pending = null; drawOverlay(); hint(); } else setTool('select'); }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && S.sel) { e.preventDefault(); deleteSel(); }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); }
+  });
+}
+
+/* ---------------- init ---------------- */
+if (!I18N[S.lang]) S.lang = 'en';
+S.lesson = Math.min(S.lesson, C.LESSONS.length - 1);
+for (const m of ['free', 'learn']) { const b = S.boards[m]; if (!b || !Array.isArray(b.parts)) S.boards[m] = { parts: [] }; }
+for (const m of ['free', 'learn']) for (const p of S.boards[m].parts) { const n = +String(p.id).slice(1); if (n >= S.nextId) S.nextId = n + 1; }
+S.celebrated = S.done.includes(C.LESSONS[S.lesson].id);
+buildBoard(); bind(); renderAll();
+if (S.mode === 'learn' && !S.boards.learn.parts.length && C.LESSONS[S.lesson].preset) startLesson(S.lesson);
+})();
+</script>
+</body>
+</html>
