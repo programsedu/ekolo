@@ -29,17 +29,21 @@ select.btn{padding-right:8px}
 .modes{display:flex;border:2px solid var(--acc2);border-radius:999px;padding:3px;gap:2px}
 .modes button{border:none;background:none;border-radius:999px;padding:7px 14px;font-weight:800;cursor:pointer;color:var(--mut)}
 .modes button.on{background:var(--acc2);color:#05221d}
-#lightBox{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 12px;font-weight:700}
-#lightBox[hidden]{display:none}
+#envbar{display:flex;flex-wrap:wrap;gap:8px;margin:0 16px 12px;padding:8px 10px;border:1px dashed var(--line);border-radius:var(--r);background:#131a27}
+#envbar[hidden]{display:none}
+.env{display:inline-flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 12px;font-weight:700;font-size:14px}
+.env input[type=range]{width:120px}.env b{min-width:44px;font-family:'JetBrains Mono',monospace;font-size:12px}
+.irbox{gap:6px}.leak{color:var(--warn);font-size:12px}.leak[hidden]{display:none}
 #banner{margin:0 16px;padding:12px 16px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--acc);display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between}
 .bt{font-weight:900;font-size:18px}.bs{color:var(--mut);font-family:'JetBrains Mono',monospace;font-size:13px}
 .donechip{font-size:13px;background:rgba(74,222,128,.15);color:var(--ok);padding:2px 8px;border-radius:999px;margin-left:6px}
-main{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;gap:14px;padding:14px 16px;align-items:start}
+main{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:14px;padding:14px 16px;align-items:start}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px}
 #left{display:flex;flex-direction:column;gap:14px;position:sticky;top:76px;max-height:calc(100vh - 90px);overflow:auto}
 .cat{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin:10px 2px 6px}
 .cat:first-child{margin-top:0}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+#left{width:100%}
 .pal{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:76px}
 .pal:hover{border-color:#40507a}
 .pal.on{border-color:var(--acc);background:#2a2320;box-shadow:0 0 0 2px rgba(255,122,51,.35)}
@@ -68,6 +72,8 @@ h3 .ico,h2 .ico{width:46px;height:30px;display:inline-block;vertical-align:middl
 #board .part{cursor:pointer}
 #board .part.act{cursor:grab}
 #board .hit{stroke:transparent;stroke-width:16;fill:none}
+#board .hov.bad{fill:rgba(255,93,93,.25);stroke:var(--bad)}
+#board .pl2{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;fill:#5b4a2a;text-anchor:middle;paint-order:stroke;stroke:#efe9da;stroke-width:2.5px;pointer-events:none}
 #board .hov{fill:rgba(45,212,191,.25);stroke:var(--acc2);stroke-width:2;pointer-events:none}
 #board .hov2{fill:rgba(45,212,191,.18);pointer-events:none}
 #board .pend{fill:rgba(255,122,51,.35);stroke:var(--acc);stroke-width:2.5;pointer-events:none}
@@ -144,8 +150,8 @@ footer{color:var(--mut);font-family:'JetBrains Mono',monospace;font-size:12px;pa
   <button class="btn" id="redoBtn" data-tt="redo" aria-label="redo">↷</button>
   <button id="simBtn"></button>
   <div class="modes"><button id="modeFree">🎮 <span data-t="free"></span></button><button id="modeLearn">🎓 <span data-t="learn"></span></button></div>
-  <label id="lightBox" hidden>☀ <span data-t="light"></span><input type="range" id="lightRange" min="0" max="100"><span id="lightVal"></span></label>
 </div>
+<div id="envbar" hidden></div>
 <div id="banner"></div>
 <main>
   <aside id="left">
@@ -761,20 +767,404 @@ en: {
 };
 if (typeof module !== 'undefined') module.exports = I18N;
 </script>
+<script>/* Additions for the extended parts set and lessons 16–22; merged into I18N. */
+(() => {
+const X = {
+sr: {
+  ui: {
+    pickRow: 'Klikni na prvu rupicu — {part} zauzima {n} susedne rupice u redu.', rowBad: 'Ovde nema mesta — potrebno je više susednih rupica u redu.',
+    temp: 'Temperatura', tiltLbl: 'Nagib', rotLbl: 'Okretanje', gasLbl: 'Gas u vazduhu', leak: 'ventil pušta gas',
+    magnetNear: 'Magnet je blizu', magnetFar: 'Primakni magnet', irRemote: 'IC daljinski', irHold: 'Drži pritisnuto', irFixed: 'Fiksno', irStop: 'Stop',
+    capacitance: 'Kapacitet', meterMode: 'Šta meri', spdtPos: 'Položaj', pinsLbl: 'Nožice', outV: 'Izlaz',
+    q_off: 'zatvoren (ne vodi)', q_act: 'otvoren (pojačava)', q_sat: 'potpuno otvoren', relayOn: 'kontakt zatvoren', relayOff: 'kontakt otvoren',
+    valveOpen: 'otvoren', valveClosed: 'zatvoren'
+  },
+  cats: { motion: 'Kretanje i rotacija', ir: 'Infracrveno (bez žice)' },
+  parts: { battery: 'Baterija 9 V', lemon: 'Limun', potato: 'Krompir', capacitor: 'Kondenzator', rgb: 'RGB LED', valve: 'Ventil za gas', spdt: 'Preklopnik', npn: 'Tranzistor', relay: 'Relej', ntc: 'Senzor temperature', tilt: 'Senzor nagiba', touch: 'Senzor dodira', reed: 'Magnetni senzor', gas: 'Senzor gasa', accel: 'Akcelerometar', gyro: 'Žiroskop', irrx: 'IC prijemnik', multimeter: 'Multimetar' },
+  info: {
+    battery: 'Još jedna baterija od 9 V. Crveni kraj (+) je plus.',
+    lemon: 'Voćna baterija: bakar (Cu) je +, cink (Zn) je −. Jedan limun daje oko 1 V — za LED spoji tri redno.',
+    potato: 'Krompir-baterija daje oko 0,85 V i malo struje. Spoji ih nekoliko redno.',
+    capacitor: 'Čuva električnu energiju kao mali rezervoar. Puni se dok ima struje, a prazni kad je nestane. Pazi na + nožicu.',
+    rgb: 'Tri LED-a u jednom: crveni, zeleni i plavi. Zajednička nožica (−) ide na minus. Mešanjem boja dobijaš nove boje.',
+    valve: 'Elektromagnetni ventil: kad kroz njega teče struja, otvara se i pušta gas.',
+    spdt: 'Preklopnik ima srednju nožicu (C) koju spaja ili sa A ili sa B. Tokom simulacije klikni da ga prebaciš.',
+    npn: 'Tranzistor je elektronski prekidač: mala struja u bazu (B) pušta veliku struju od kolektora (C) do emitera (E).',
+    relay: 'Relej: kad struja teče kroz kalem (~ ~), magnet privuče kontakt i spoji C sa NO. Tako malo kolo uključuje drugo, veliko.',
+    ntc: 'Termistor: što je toplije, otpor mu je manji. Temperaturu menjaš klizačem 🌡.',
+    tilt: 'U njemu je kuglica. Kad se nagne više od 45°, kuglica spoji kontakte. Nagib menjaš klizačem 📐.',
+    touch: 'Senzor dodira: spaja kolo dok ga dodiruješ. Tokom simulacije pritisni ga prstom ili mišem.',
+    reed: 'Magnetni (rid) prekidač: spoji se kad mu primakneš magnet 🧲.',
+    gas: 'Senzor gasa: kad u vazduhu ima više gasa, otpor mu pada. Količinu gasa menjaš klizačem 💨.',
+    accel: 'Akcelerometar oseća nagib. Spoji + i −, a izlaz S daje veći napon što je nagib veći.',
+    gyro: 'Žiroskop oseća okretanje. Spoji + i −, a izlaz S daje veći napon što se brže okreće.',
+    irrx: 'IC prijemnik hvata nevidljivo svetlo daljinskog upravljača. Dok daljinski šalje signal, izlaz S je uključen.',
+    multimeter: 'Multimetar meri napon (V) ili struju (mA). Izaberi šta meri u svojstvima — za struju ide redno, za napon paralelno.'
+  },
+  pinNames: { rgb: ['crvena', 'zajednička', 'zelena', 'plava'], spdt: ['strana A', 'sredina', 'strana B'], npn: ['emiter', 'baza', 'kolektor'], relay: ['kalem', 'kalem', 'zajednički', 'radni kontakt'], accel: ['plus', 'signal', 'minus'], gyro: ['plus', 'signal', 'minus'], irrx: ['plus', 'signal', 'minus'] },
+  helpExtra: 'Kad postaviš senzor, iznad protoborda se pojavljuju kontrole: svetlo, temperatura, nagib, gas, magnet i IC daljinski.',
+  lessons: [
+    { t: 'Voćna baterija', d: 'Limun i krompir mogu da prave struju! Jedan daje malo napona, zato ih spajamo redno. Za ovaj nivo ne koristiš veliku bateriju.', s: [
+      'Postavi tri <b>limuna</b> u donji deo, jedan za drugim: − (Zn) jednog u istu kolonu kao + (Cu) sledećeg.',
+      'Postavi <b>LED</b>: duža nožica u kolonu + prvog limuna.',
+      'Kratku nožicu LED-a spoji <b>žicom</b> sa − poslednjeg limuna.',
+      'Simuliraj — LED slabo svetli. Probaj i sa krompirima!'] },
+    { t: 'Kondenzator', d: 'Kondenzator je mali rezervoar struje. Kad pustiš taster, LED još malo svetli dok se kondenzator prazni.', s: [
+      'Postavi <b>taster</b> od + šine do jedne kolone.',
+      'Iz te kolone postavi <b>kondenzator</b> (+ nožica u kolonu) do − šine.',
+      'Iz iste kolone: <b>otpornik</b> → <b>LED</b> → − šina.',
+      'Simuliraj, drži taster par sekundi, pa pusti. LED se polako gasi.'] },
+    { t: 'Tranzistor kao prekidač', d: 'Mala struja kroz bazu tranzistora pali veliku sijalicu.', s: [
+      'Postavi <b>tranzistor</b> u donji deo: nožice E, B, C.',
+      '+ šina → <b>taster</b> → <b>otpornik 10 kΩ</b> → baza (B).',
+      '+ šina → <b>sijalica</b> → kolektor (C).',
+      'Emiter (E) spoji na − (donju − šinu spoji sa gornjom).',
+      'Simuliraj i drži taster.'] },
+    { t: 'Noćno svetlo', d: 'Napravi svetlo koje se samo pali kad padne mrak — sa fotootpornikom i tranzistorom.', s: [
+      '+ šina → <b>otpornik 10 kΩ</b> → kolona X, a iz kolone X <b>fotootpornik</b> → − šina.',
+      'Iz kolone X <b>otpornik 1 kΩ</b> → baza tranzistora.',
+      '+ šina → otpornik → <b>LED</b> → kolektor; emiter → −.',
+      'Simuliraj i pomeraj ☀ Svetlo: u mraku LED svetli, na svetlu se gasi.'] },
+    { t: 'Relej', d: 'Relej je prekidač koji pomera magnet. Malo kolo sa tasterom uključuje drugo kolo sa motorom.', s: [
+      'Postavi <b>relej</b> u donji deo: dve nožice kalema (~ ~), pa C i NO.',
+      '+ šina → <b>taster</b> → prvi ~; drugi ~ → − šina.',
+      '+ šina → C; NO → <b>motor</b> → − šina.',
+      'Simuliraj i drži taster — čuješ „klik“ i motor kreće.'] },
+    { t: 'RGB LED', d: 'U RGB LED-u su tri svetla: crveno, zeleno i plavo. Kad upališ dva ili tri, boje se mešaju!', s: [
+      'Postavi <b>RGB LED</b> — zauzima 4 kolone: R, −, G, B.',
+      'Zajedničku nožicu (−) spoji na − šinu.',
+      'Na R, G i B dovedi struju sa + šine, svaku kroz svoj <b>otpornik</b>.',
+      'Simuliraj — upali bar dve boje odjednom.'] },
+    { t: 'Senzori', d: 'Senzori osećaju svet oko sebe: toplotu, nagib, dodir, magnet, gas, pokret i daljinski upravljač.', s: [
+      'Izaberi jedan <b>senzor</b> (npr. magnetni) i stavi ga u kolo sa otpornikom i LED-om.',
+      'Moduli (akcelerometar, žiroskop, IC prijemnik) imaju nožice +, S, −: + na plus, − na minus, a S kroz otpornik na LED.',
+      'Simuliraj i menjaj okolinu kontrolama iznad protoborda — LED treba da se pali i gasi.'] }
+  ]
+},
+mk: {
+  ui: {
+    pickRow: 'Кликни на првата дупка — {part} зафаќа {n} соседни дупки во ред.', rowBad: 'Тука нема место — потребни се повеќе соседни дупки во ред.',
+    temp: 'Температура', tiltLbl: 'Наклон', rotLbl: 'Вртење', gasLbl: 'Гас во воздухот', leak: 'вентилот пушта гас',
+    magnetNear: 'Магнетот е блиску', magnetFar: 'Приближи магнет', irRemote: 'IC далечински', irHold: 'Држи притиснато', irFixed: 'Фиксно', irStop: 'Стоп',
+    capacitance: 'Капацитет', meterMode: 'Што мери', spdtPos: 'Положба', pinsLbl: 'Ножички', outV: 'Излез',
+    q_off: 'затворен (не спроведува)', q_act: 'отворен (засилува)', q_sat: 'целосно отворен', relayOn: 'контактот е затворен', relayOff: 'контактот е отворен',
+    valveOpen: 'отворен', valveClosed: 'затворен'
+  },
+  cats: { motion: 'Движење и вртење', ir: 'Инфрацрвено (без жица)' },
+  parts: { battery: 'Батерија 9 V', lemon: 'Лимон', potato: 'Компир', capacitor: 'Кондензатор', rgb: 'RGB LED', valve: 'Вентил за гас', spdt: 'Преклопник', npn: 'Транзистор', relay: 'Реле', ntc: 'Сензор за температура', tilt: 'Сензор за наклон', touch: 'Сензор за допир', reed: 'Магнетен сензор', gas: 'Сензор за гас', accel: 'Акцелерометар', gyro: 'Жироскоп', irrx: 'IC приемник', multimeter: 'Мултиметар' },
+  info: {
+    battery: 'Уште една батерија од 9 V. Црвениот крај (+) е плусот.',
+    lemon: 'Овошна батерија: бакарот (Cu) е +, цинкот (Zn) е −. Еден лимон дава околу 1 V — за LED поврзи три сериски.',
+    potato: 'Компир-батеријата дава околу 0,85 V и малку струја. Поврзи неколку сериски.',
+    capacitor: 'Чува електрична енергија како мал резервоар. Се полни додека има струја, а се празни кога ќе ја снема. Внимавај на + ножичката.',
+    rgb: 'Три LED-а во еден: црвен, зелен и син. Заедничката ножичка (−) оди на минус. Со мешање на боите добиваш нови бои.',
+    valve: 'Електромагнетен вентил: кога низ него тече струја, се отвора и пушта гас.',
+    spdt: 'Преклопникот ја поврзува средната ножичка (C) или со A или со B. За време на симулацијата кликни за да го префрлиш.',
+    npn: 'Транзисторот е електронски прекинувач: мала струја во базата (B) пушта голема струја од колекторот (C) до емитерот (E).',
+    relay: 'Реле: кога струја тече низ калемот (~ ~), магнетот го привлекува контактот и ги поврзува C и NO. Така мало коло вклучува друго, големо коло.',
+    ntc: 'Термистор: колку е потопло, толку отпорот му е помал. Температурата ја менуваш со лизгачот 🌡.',
+    tilt: 'Во него има топче. Кога ќе се наклони повеќе од 45°, топчето ги поврзува контактите. Наклонот го менуваш со лизгачот 📐.',
+    touch: 'Сензор за допир: го затвора колото додека го допираш. За време на симулацијата притисни го со прст или со глувчето.',
+    reed: 'Магнетен (рид) прекинувач: се затвора кога ќе му приближиш магнет 🧲.',
+    gas: 'Сензор за гас: кога во воздухот има повеќе гас, отпорот му опаѓа. Количината на гас ја менуваш со лизгачот 💨.',
+    accel: 'Акцелерометарот чувствува наклон. Поврзи + и −, а излезот S дава поголем напон колку е поголем наклонот.',
+    gyro: 'Жироскопот чувствува вртење. Поврзи + и −, а излезот S дава поголем напон колку побрзо се врти.',
+    irrx: 'IC приемникот ја фаќа невидливата светлина од далечинскиот управувач. Додека далечинскиот праќа сигнал, излезот S е вклучен.',
+    multimeter: 'Мултиметарот мери напон (V) или струја (mA). Избери што мери во својствата — за струја се става сериски, за напон паралелно.'
+  },
+  pinNames: { rgb: ['црвена', 'заедничка', 'зелена', 'сина'], spdt: ['страна A', 'средина', 'страна B'], npn: ['емитер', 'база', 'колектор'], relay: ['калем', 'калем', 'заеднички', 'работен контакт'], accel: ['плус', 'сигнал', 'минус'], gyro: ['плус', 'сигнал', 'минус'], irrx: ['плус', 'сигнал', 'минус'] },
+  helpExtra: 'Кога ќе поставиш сензор, над плочата се појавуваат контроли: светлина, температура, наклон, гас, магнет и IC далечински.',
+  lessons: [
+    { t: 'Овошна батерија', d: 'Лимонот и компирот можат да прават струја! Еден дава мал напон, затоа ги поврзуваме сериски. За ова ниво не ја користиш големата батерија.', s: [
+      'Постави три <b>лимони</b> во долниот дел, еден по друг: − (Zn) на едниот во иста колона со + (Cu) на следниот.',
+      'Постави <b>LED</b>: подолгата ножичка во колоната на + од првиот лимон.',
+      'Кратката ножичка на LED-от поврзи ја со <b>жица</b> со − на последниот лимон.',
+      'Симулирај — LED-от слабо свети. Пробај и со компири!'] },
+    { t: 'Кондензатор', d: 'Кондензаторот е мал резервоар за струја. Кога ќе го пуштиш копчето, LED-от уште малку свети додека кондензаторот се празни.', s: [
+      'Постави <b>копче</b> од + шината до една колона.',
+      'Од таа колона постави <b>кондензатор</b> (+ ножичката во колоната) до − шината.',
+      'Од истата колона: <b>отпорник</b> → <b>LED</b> → − шина.',
+      'Симулирај, држи го копчето неколку секунди, па пушти. LED-от полека се гаси.'] },
+    { t: 'Транзистор како прекинувач', d: 'Мала струја низ базата на транзисторот пали голема сијалица.', s: [
+      'Постави <b>транзистор</b> во долниот дел: ножички E, B, C.',
+      '+ шина → <b>копче</b> → <b>отпорник 10 kΩ</b> → база (B).',
+      '+ шина → <b>сијалица</b> → колектор (C).',
+      'Емитерот (E) поврзи го на − (долната − шина поврзи ја со горната).',
+      'Симулирај и држи го копчето.'] },
+    { t: 'Ноќно светло', d: 'Направи светло што само се пали кога ќе се стемни — со фотоотпорник и транзистор.', s: [
+      '+ шина → <b>отпорник 10 kΩ</b> → колона X, а од колоната X <b>фотоотпорник</b> → − шина.',
+      'Од колоната X <b>отпорник 1 kΩ</b> → база на транзисторот.',
+      '+ шина → отпорник → <b>LED</b> → колектор; емитер → −.',
+      'Симулирај и мрдај го ☀ Светлина: во темно LED-от свети, на светло се гаси.'] },
+    { t: 'Реле', d: 'Релето е прекинувач што го мрда магнет. Мало коло со копче вклучува друго коло со мотор.', s: [
+      'Постави <b>реле</b> во долниот дел: две ножички на калемот (~ ~), па C и NO.',
+      '+ шина → <b>копче</b> → првиот ~; вториот ~ → − шина.',
+      '+ шина → C; NO → <b>мотор</b> → − шина.',
+      'Симулирај и држи го копчето — се слуша „клик“ и моторот тргнува.'] },
+    { t: 'RGB LED', d: 'Во RGB LED-от има три светла: црвено, зелено и сино. Кога ќе запалиш две или три, боите се мешаат!', s: [
+      'Постави <b>RGB LED</b> — зафаќа 4 колони: R, −, G, B.',
+      'Заедничката ножичка (−) поврзи ја на − шината.',
+      'На R, G и B доведи струја од + шината, секоја низ свој <b>отпорник</b>.',
+      'Симулирај — запали барем две бои одеднаш.'] },
+    { t: 'Сензори', d: 'Сензорите го чувствуваат светот околу нив: топлина, наклон, допир, магнет, гас, движење и далечински управувач.', s: [
+      'Избери еден <b>сензор</b> (на пр. магнетен) и стави го во коло со отпорник и LED.',
+      'Модулите (акцелерометар, жироскоп, IC приемник) имаат ножички +, S, −: + на плус, − на минус, а S низ отпорник на LED.',
+      'Симулирај и менувај ја околината со контролите над плочата — LED-от треба да се пали и гаси.'] }
+  ]
+},
+ro: {
+  ui: {
+    pickRow: 'Dă clic pe prima gaură — {part} ocupă {n} găuri vecine pe rând.', rowBad: 'Nu e loc aici — trebuie mai multe găuri vecine pe rând.',
+    temp: 'Temperatură', tiltLbl: 'Înclinare', rotLbl: 'Rotație', gasLbl: 'Gaz în aer', leak: 'supapa eliberează gaz',
+    magnetNear: 'Magnetul e aproape', magnetFar: 'Apropie magnetul', irRemote: 'Telecomandă IR', irHold: 'Ține apăsat', irFixed: 'Fix', irStop: 'Stop',
+    capacitance: 'Capacitate', meterMode: 'Ce măsoară', spdtPos: 'Poziția', pinsLbl: 'Picioare', outV: 'Ieșire',
+    q_off: 'blocat (nu conduce)', q_act: 'deschis (amplifică)', q_sat: 'complet deschis', relayOn: 'contact închis', relayOff: 'contact deschis',
+    valveOpen: 'deschisă', valveClosed: 'închisă'
+  },
+  cats: { motion: 'Mișcare și rotație', ir: 'Infraroșu (fără fir)' },
+  parts: { battery: 'Baterie 9 V', lemon: 'Lămâie', potato: 'Cartof', capacitor: 'Condensator', rgb: 'LED RGB', valve: 'Supapă de gaz', spdt: 'Comutator', npn: 'Tranzistor', relay: 'Releu', ntc: 'Senzor de temperatură', tilt: 'Senzor de înclinare', touch: 'Senzor tactil', reed: 'Senzor magnetic', gas: 'Senzor de gaz', accel: 'Accelerometru', gyro: 'Giroscop', irrx: 'Receptor IR', multimeter: 'Multimetru' },
+  info: {
+    battery: 'Încă o baterie de 9 V. Capătul roșu (+) e plusul.',
+    lemon: 'Baterie din fructe: cuprul (Cu) e +, zincul (Zn) e −. O lămâie dă cam 1 V — pentru un LED leagă trei în serie.',
+    potato: 'Bateria din cartof dă cam 0,85 V și puțin curent. Leagă mai mulți în serie.',
+    capacitor: 'Păstrează energie electrică, ca un mic rezervor. Se încarcă cât are curent și se descarcă atunci când curentul dispare. Atenție la piciorul +.',
+    rgb: 'Trei LED-uri într-unul: roșu, verde și albastru. Piciorul comun (−) merge la minus. Amestecând culorile obții culori noi.',
+    valve: 'Supapă electromagnetică: când trece curent prin ea, se deschide și lasă gazul să iasă.',
+    spdt: 'Comutatorul leagă piciorul din mijloc (C) fie cu A, fie cu B. În timpul simulării dă clic ca să-l comuți.',
+    npn: 'Tranzistorul e un întrerupător electronic: un curent mic în bază (B) lasă să treacă un curent mare de la colector (C) la emitor (E).',
+    relay: 'Releu: când trece curent prin bobină (~ ~), magnetul atrage contactul și leagă C cu NO. Așa un circuit mic pornește alt circuit, mare.',
+    ntc: 'Termistor: cu cât e mai cald, cu atât rezistența lui e mai mică. Temperatura o schimbi din cursorul 🌡.',
+    tilt: 'Înăuntru are o bilă. Când se înclină peste 45°, bila leagă contactele. Înclinarea o schimbi din cursorul 📐.',
+    touch: 'Senzor tactil: închide circuitul cât îl atingi. În timpul simulării apasă-l cu degetul sau cu mouse-ul.',
+    reed: 'Întrerupător magnetic (reed): se închide când apropii un magnet 🧲.',
+    gas: 'Senzor de gaz: când e mai mult gaz în aer, rezistența lui scade. Cantitatea de gaz o schimbi din cursorul 💨.',
+    accel: 'Accelerometrul simte înclinarea. Leagă + și −, iar ieșirea S dă o tensiune mai mare cu cât înclinarea e mai mare.',
+    gyro: 'Giroscopul simte rotația. Leagă + și −, iar ieșirea S dă o tensiune mai mare cu cât se rotește mai repede.',
+    irrx: 'Receptorul IR prinde lumina invizibilă a telecomenzii. Cât timp telecomanda trimite semnal, ieșirea S e pornită.',
+    multimeter: 'Multimetrul măsoară tensiunea (V) sau curentul (mA). Alege ce măsoară în proprietăți — pentru curent se pune în serie, pentru tensiune în paralel.'
+  },
+  pinNames: { rgb: ['roșu', 'comun', 'verde', 'albastru'], spdt: ['partea A', 'mijloc', 'partea B'], npn: ['emitor', 'bază', 'colector'], relay: ['bobină', 'bobină', 'comun', 'contact normal deschis'], accel: ['plus', 'semnal', 'minus'], gyro: ['plus', 'semnal', 'minus'], irrx: ['plus', 'semnal', 'minus'] },
+  helpExtra: 'Când pui un senzor, deasupra breadboardului apar controale: lumină, temperatură, înclinare, gaz, magnet și telecomanda IR.',
+  lessons: [
+    { t: 'Bateria din fructe', d: 'Lămâia și cartoful pot face curent! Unul singur dă puțină tensiune, de aceea le legăm în serie. La acest nivel nu folosești bateria mare.', s: [
+      'Pune trei <b>lămâi</b> în partea de jos, una după alta: − (Zn) al uneia în aceeași coloană cu + (Cu) al următoarei.',
+      'Pune <b>LED-ul</b>: piciorul lung în coloana + a primei lămâi.',
+      'Leagă piciorul scurt al LED-ului cu un <b>fir</b> la − al ultimei lămâi.',
+      'Simulează — LED-ul luminează slab. Încearcă și cu cartofi!'] },
+    { t: 'Condensatorul', d: 'Condensatorul e un mic rezervor de curent. Când eliberezi butonul, LED-ul mai luminează puțin cât se descarcă condensatorul.', s: [
+      'Pune un <b>buton</b> de la șina + la o coloană.',
+      'Din acea coloană pune un <b>condensator</b> (piciorul + în coloană) până la șina −.',
+      'Din aceeași coloană: <b>rezistor</b> → <b>LED</b> → șina −.',
+      'Simulează, ține butonul câteva secunde, apoi eliberează-l. LED-ul se stinge încet.'] },
+    { t: 'Tranzistorul ca întrerupător', d: 'Un curent mic prin baza tranzistorului aprinde un bec mare.', s: [
+      'Pune un <b>tranzistor</b> în partea de jos: picioarele E, B, C.',
+      'Șina + → <b>buton</b> → <b>rezistor de 10 kΩ</b> → bază (B).',
+      'Șina + → <b>bec</b> → colector (C).',
+      'Leagă emitorul (E) la − (leagă șina − de jos cu cea de sus).',
+      'Simulează și ține butonul.'] },
+    { t: 'Lumina de noapte', d: 'Fă o lumină care se aprinde singură când se întunecă — cu fotorezistor și tranzistor.', s: [
+      'Șina + → <b>rezistor de 10 kΩ</b> → coloana X, iar din coloana X <b>fotorezistor</b> → șina −.',
+      'Din coloana X <b>rezistor de 1 kΩ</b> → baza tranzistorului.',
+      'Șina + → rezistor → <b>LED</b> → colector; emitor → −.',
+      'Simulează și mută ☀ Lumină: pe întuneric LED-ul luminează, la lumină se stinge.'] },
+    { t: 'Releul', d: 'Releul e un întrerupător mișcat de un magnet. Un circuit mic cu buton pornește alt circuit cu motor.', s: [
+      'Pune <b>releul</b> în partea de jos: două picioare de bobină (~ ~), apoi C și NO.',
+      'Șina + → <b>buton</b> → primul ~; al doilea ~ → șina −.',
+      'Șina + → C; NO → <b>motor</b> → șina −.',
+      'Simulează și ține butonul — se aude „clic” și motorul pornește.'] },
+    { t: 'LED-ul RGB', d: 'În LED-ul RGB sunt trei lumini: roșie, verde și albastră. Când aprinzi două sau trei, culorile se amestecă!', s: [
+      'Pune <b>LED-ul RGB</b> — ocupă 4 coloane: R, −, G, B.',
+      'Leagă piciorul comun (−) la șina −.',
+      'La R, G și B adu curent de la șina +, fiecare prin <b>rezistorul</b> lui.',
+      'Simulează — aprinde cel puțin două culori deodată.'] },
+    { t: 'Senzorii', d: 'Senzorii simt lumea din jur: căldura, înclinarea, atingerea, magnetul, gazul, mișcarea și telecomanda.', s: [
+      'Alege un <b>senzor</b> (de ex. cel magnetic) și pune-l într-un circuit cu rezistor și LED.',
+      'Modulele (accelerometru, giroscop, receptor IR) au picioarele +, S, −: + la plus, − la minus, iar S prin rezistor la LED.',
+      'Simulează și schimbă mediul din controalele de deasupra breadboardului — LED-ul trebuie să se aprindă și să se stingă.'] }
+  ]
+},
+bg: {
+  ui: {
+    pickRow: 'Щракни върху първата дупка — {part} заема {n} съседни дупки в ред.', rowBad: 'Тук няма място — трябват повече съседни дупки в ред.',
+    temp: 'Температура', tiltLbl: 'Наклон', rotLbl: 'Въртене', gasLbl: 'Газ във въздуха', leak: 'вентилът пуска газ',
+    magnetNear: 'Магнитът е близо', magnetFar: 'Приближи магнит', irRemote: 'ИЧ дистанционно', irHold: 'Задръж', irFixed: 'Постоянно', irStop: 'Стоп',
+    capacitance: 'Капацитет', meterMode: 'Какво мери', spdtPos: 'Положение', pinsLbl: 'Крачета', outV: 'Изход',
+    q_off: 'запушен (не провежда)', q_act: 'отпушен (усилва)', q_sat: 'напълно отпушен', relayOn: 'контактът е затворен', relayOff: 'контактът е отворен',
+    valveOpen: 'отворен', valveClosed: 'затворен'
+  },
+  cats: { motion: 'Движение и въртене', ir: 'Инфрачервено (без кабел)' },
+  parts: { battery: 'Батерия 9 V', lemon: 'Лимон', potato: 'Картоф', capacitor: 'Кондензатор', rgb: 'RGB светодиод', valve: 'Газов вентил', spdt: 'Превключвател', npn: 'Транзистор', relay: 'Реле', ntc: 'Температурен сензор', tilt: 'Сензор за наклон', touch: 'Сензор за допир', reed: 'Магнитен сензор', gas: 'Газов сензор', accel: 'Акселерометър', gyro: 'Жироскоп', irrx: 'ИЧ приемник', multimeter: 'Мултиметър' },
+  info: {
+    battery: 'Още една батерия от 9 V. Червеният край (+) е плюсът.',
+    lemon: 'Плодова батерия: медта (Cu) е +, цинкът (Zn) е −. Един лимон дава около 1 V — за светодиод свържи три последователно.',
+    potato: 'Картофената батерия дава около 0,85 V и малко ток. Свържи няколко последователно.',
+    capacitor: 'Пази електрическа енергия като малък резервоар. Зарежда се, докато има ток, и се разрежда, когато токът изчезне. Внимавай за крачето +.',
+    rgb: 'Три светодиода в един: червен, зелен и син. Общото краче (−) отива към минуса. Като смесваш цветовете, получаваш нови цветове.',
+    valve: 'Електромагнитен вентил: когато през него тече ток, се отваря и пуска газ.',
+    spdt: 'Превключвателят свързва средното краче (C) или с A, или с B. По време на симулацията щракни, за да го превключиш.',
+    npn: 'Транзисторът е електронен ключ: малък ток в базата (B) пропуска голям ток от колектора (C) към емитера (E).',
+    relay: 'Реле: когато през бобината (~ ~) тече ток, магнитът привлича контакта и свързва C с NO. Така малка верига включва друга, голяма верига.',
+    ntc: 'Термистор: колкото е по-топло, толкова съпротивлението му е по-малко. Температурата се променя с плъзгача 🌡.',
+    tilt: 'Вътре има топче. Когато се наклони повече от 45°, топчето свързва контактите. Наклонът се променя с плъзгача 📐.',
+    touch: 'Сензор за допир: затваря веригата, докато го докосваш. По време на симулацията го натисни с пръст или с мишката.',
+    reed: 'Магнитен (рийд) ключ: затваря се, когато приближиш магнит 🧲.',
+    gas: 'Газов сензор: когато във въздуха има повече газ, съпротивлението му намалява. Количеството газ се променя с плъзгача 💨.',
+    accel: 'Акселерометърът усеща наклон. Свържи + и −, а изходът S дава по-голямо напрежение, колкото по-голям е наклонът.',
+    gyro: 'Жироскопът усеща въртене. Свържи + и −, а изходът S дава по-голямо напрежение, колкото по-бързо се върти.',
+    irrx: 'ИЧ приемникът улавя невидимата светлина на дистанционното. Докато дистанционното изпраща сигнал, изходът S е включен.',
+    multimeter: 'Мултиметърът мери напрежение (V) или ток (mA). Избери какво мери в свойствата — за ток се свързва последователно, за напрежение успоредно.'
+  },
+  pinNames: { rgb: ['червен', 'общ', 'зелен', 'син'], spdt: ['страна A', 'среда', 'страна B'], npn: ['емитер', 'база', 'колектор'], relay: ['бобина', 'бобина', 'общ', 'нормално отворен'], accel: ['плюс', 'сигнал', 'минус'], gyro: ['плюс', 'сигнал', 'минус'], irrx: ['плюс', 'сигнал', 'минус'] },
+  helpExtra: 'Когато поставиш сензор, над платката се появяват контроли: светлина, температура, наклон, газ, магнит и ИЧ дистанционно.',
+  lessons: [
+    { t: 'Плодова батерия', d: 'Лимонът и картофът могат да правят ток! Един дава малко напрежение, затова ги свързваме последователно. На това ниво не използваш голямата батерия.', s: [
+      'Постави три <b>лимона</b> в долната част, един след друг: − (Zn) на единия в същата колона като + (Cu) на следващия.',
+      'Постави <b>светодиода</b>: дългото краче в колоната на + на първия лимон.',
+      'Свържи късото краче на светодиода с <b>проводник</b> към − на последния лимон.',
+      'Симулирай — светодиодът свети слабо. Опитай и с картофи!'] },
+    { t: 'Кондензатор', d: 'Кондензаторът е малък резервоар за ток. Когато пуснеш бутона, светодиодът свети още малко, докато кондензаторът се разрежда.', s: [
+      'Постави <b>бутон</b> от шината + до една колона.',
+      'От тази колона постави <b>кондензатор</b> (крачето + в колоната) до шината −.',
+      'От същата колона: <b>резистор</b> → <b>светодиод</b> → шина −.',
+      'Симулирай, задръж бутона няколко секунди и го пусни. Светодиодът угасва бавно.'] },
+    { t: 'Транзисторът като ключ', d: 'Малък ток през базата на транзистора пали голяма крушка.', s: [
+      'Постави <b>транзистор</b> в долната част: крачета E, B, C.',
+      'Шина + → <b>бутон</b> → <b>резистор 10 kΩ</b> → база (B).',
+      'Шина + → <b>крушка</b> → колектор (C).',
+      'Свържи емитера (E) към − (свържи долната шина − с горната).',
+      'Симулирай и задръж бутона.'] },
+    { t: 'Нощна лампа', d: 'Направи лампа, която сама светва, когато се стъмни — с фоторезистор и транзистор.', s: [
+      'Шина + → <b>резистор 10 kΩ</b> → колона X, а от колона X <b>фоторезистор</b> → шина −.',
+      'От колона X <b>резистор 1 kΩ</b> → базата на транзистора.',
+      'Шина + → резистор → <b>светодиод</b> → колектор; емитер → −.',
+      'Симулирай и мести ☀ Светлина: на тъмно светодиодът свети, на светло угасва.'] },
+    { t: 'Реле', d: 'Релето е ключ, който се движи от магнит. Малка верига с бутон включва друга верига с мотор.', s: [
+      'Постави <b>релето</b> в долната част: две крачета на бобината (~ ~), после C и NO.',
+      'Шина + → <b>бутон</b> → първото ~; второто ~ → шина −.',
+      'Шина + → C; NO → <b>мотор</b> → шина −.',
+      'Симулирай и задръж бутона — чува се „щрак“ и моторът тръгва.'] },
+    { t: 'RGB светодиод', d: 'В RGB светодиода има три светлини: червена, зелена и синя. Когато запалиш две или три, цветовете се смесват!', s: [
+      'Постави <b>RGB светодиода</b> — заема 4 колони: R, −, G, B.',
+      'Свържи общото краче (−) към шината −.',
+      'До R, G и B подай ток от шината +, всеки през свой <b>резистор</b>.',
+      'Симулирай — запали поне два цвята едновременно.'] },
+    { t: 'Сензори', d: 'Сензорите усещат света около тях: топлина, наклон, допир, магнит, газ, движение и дистанционно.', s: [
+      'Избери един <b>сензор</b> (напр. магнитния) и го сложи във верига с резистор и светодиод.',
+      'Модулите (акселерометър, жироскоп, ИЧ приемник) имат крачета +, S, −: + към плюса, − към минуса, а S през резистор към светодиода.',
+      'Симулирай и променяй средата с контролите над платката — светодиодът трябва да светва и да угасва.'] }
+  ]
+},
+en: {
+  ui: {
+    pickRow: 'Click the first hole — the {part} takes {n} neighbouring holes in a row.', rowBad: 'No room here — it needs more neighbouring holes in a row.',
+    temp: 'Temperature', tiltLbl: 'Tilt', rotLbl: 'Rotation', gasLbl: 'Gas in the air', leak: 'the valve is releasing gas',
+    magnetNear: 'Magnet is near', magnetFar: 'Bring a magnet', irRemote: 'IR remote', irHold: 'Hold', irFixed: 'Latched', irStop: 'Stop',
+    capacitance: 'Capacitance', meterMode: 'What it measures', spdtPos: 'Position', pinsLbl: 'Legs', outV: 'Output',
+    q_off: 'off (not conducting)', q_act: 'on (amplifying)', q_sat: 'fully on', relayOn: 'contact closed', relayOff: 'contact open',
+    valveOpen: 'open', valveClosed: 'closed'
+  },
+  cats: { motion: 'Motion and rotation', ir: 'Infrared (wireless)' },
+  parts: { battery: '9 V battery', lemon: 'Lemon', potato: 'Potato', capacitor: 'Capacitor', rgb: 'RGB LED', valve: 'Gas valve', spdt: 'Changeover switch', npn: 'Transistor', relay: 'Relay', ntc: 'Temperature sensor', tilt: 'Tilt sensor', touch: 'Touch sensor', reed: 'Magnetic sensor', gas: 'Gas sensor', accel: 'Accelerometer', gyro: 'Gyroscope', irrx: 'IR receiver', multimeter: 'Multimeter' },
+  info: {
+    battery: 'One more 9 V battery. The red end (+) is plus.',
+    lemon: 'A fruit battery: copper (Cu) is +, zinc (Zn) is −. One lemon gives about 1 V — for an LED, connect three in series.',
+    potato: 'A potato battery gives about 0.85 V and only a little current. Connect several in series.',
+    capacitor: 'Stores electrical energy like a small tank. It fills while there is current and empties when the current stops. Mind the + leg.',
+    rgb: 'Three LEDs in one: red, green and blue. The common leg (−) goes to minus. Mix the colours to make new ones.',
+    valve: 'A solenoid valve: when current flows through it, it opens and lets gas out.',
+    spdt: 'A changeover switch connects its middle leg (C) either to A or to B. While simulating, click it to flip it.',
+    npn: 'A transistor is an electronic switch: a small current into the base (B) lets a big current flow from the collector (C) to the emitter (E).',
+    relay: 'A relay: when current flows through the coil (~ ~), a magnet pulls the contact and connects C to NO. That way a small circuit switches another, bigger one.',
+    ntc: 'A thermistor: the warmer it is, the lower its resistance. Change the temperature with the 🌡 slider.',
+    tilt: 'There is a little ball inside. Tilt it past 45° and the ball connects the contacts. Change the tilt with the 📐 slider.',
+    touch: 'A touch sensor closes the circuit while you touch it. While simulating, press it with your finger or the mouse.',
+    reed: 'A magnetic (reed) switch closes when you bring a magnet 🧲 close.',
+    gas: 'A gas sensor: the more gas in the air, the lower its resistance. Change the amount of gas with the 💨 slider.',
+    accel: 'An accelerometer senses tilt. Connect + and −, and output S gives a higher voltage the more it is tilted.',
+    gyro: 'A gyroscope senses rotation. Connect + and −, and output S gives a higher voltage the faster it turns.',
+    irrx: 'An IR receiver catches the invisible light of a remote control. While the remote is sending, output S is on.',
+    multimeter: 'A multimeter measures voltage (V) or current (mA). Choose what it measures in its properties — in series for current, in parallel for voltage.'
+  },
+  pinNames: { rgb: ['red', 'common', 'green', 'blue'], spdt: ['side A', 'middle', 'side B'], npn: ['emitter', 'base', 'collector'], relay: ['coil', 'coil', 'common', 'normally open'], accel: ['plus', 'signal', 'minus'], gyro: ['plus', 'signal', 'minus'], irrx: ['plus', 'signal', 'minus'] },
+  helpExtra: 'When you place a sensor, controls appear above the breadboard: light, temperature, tilt, gas, magnet and the IR remote.',
+  lessons: [
+    { t: 'Fruit battery', d: 'Lemons and potatoes can make electricity! One gives only a little voltage, so we connect them in series. Don’t use the big battery for this level.', s: [
+      'Place three <b>lemons</b> in the bottom half, one after another: the − (Zn) of one in the same column as the + (Cu) of the next.',
+      'Place an <b>LED</b>: long leg in the column of the first lemon’s +.',
+      'Connect the LED’s short leg with a <b>wire</b> to the − of the last lemon.',
+      'Simulate — the LED glows faintly. Try it with potatoes too!'] },
+    { t: 'Capacitor', d: 'A capacitor is a little tank of electricity. When you let go of the button, the LED keeps glowing for a while as the capacitor empties.', s: [
+      'Place a <b>push button</b> from the + rail to a column.',
+      'From that column, place a <b>capacitor</b> (+ leg in the column) to the − rail.',
+      'From the same column: <b>resistor</b> → <b>LED</b> → − rail.',
+      'Simulate, hold the button for a few seconds, then let go. The LED fades slowly.'] },
+    { t: 'Transistor as a switch', d: 'A small current through the transistor’s base turns on a big bulb.', s: [
+      'Place a <b>transistor</b> in the bottom half: legs E, B, C.',
+      '+ rail → <b>push button</b> → <b>10 kΩ resistor</b> → base (B).',
+      '+ rail → <b>bulb</b> → collector (C).',
+      'Connect the emitter (E) to − (join the bottom − rail to the top one).',
+      'Simulate and hold the button.'] },
+    { t: 'Night light', d: 'Build a light that switches itself on when it gets dark — with a light sensor and a transistor.', s: [
+      '+ rail → <b>10 kΩ resistor</b> → column X, and from column X a <b>light sensor</b> → − rail.',
+      'From column X a <b>1 kΩ resistor</b> → the transistor’s base.',
+      '+ rail → resistor → <b>LED</b> → collector; emitter → −.',
+      'Simulate and move ☀ Light: in the dark the LED shines, in the light it goes out.'] },
+    { t: 'Relay', d: 'A relay is a switch moved by a magnet. A small circuit with a button switches on another circuit with a motor.', s: [
+      'Place a <b>relay</b> in the bottom half: two coil legs (~ ~), then C and NO.',
+      '+ rail → <b>push button</b> → first ~; second ~ → − rail.',
+      '+ rail → C; NO → <b>motor</b> → − rail.',
+      'Simulate and hold the button — you hear a “click” and the motor starts.'] },
+    { t: 'RGB LED', d: 'An RGB LED has three lights inside: red, green and blue. Light two or three and the colours mix!', s: [
+      'Place the <b>RGB LED</b> — it takes 4 columns: R, −, G, B.',
+      'Connect the common leg (−) to the − rail.',
+      'Feed R, G and B from the + rail, each through its own <b>resistor</b>.',
+      'Simulate — light at least two colours at once.'] },
+    { t: 'Sensors', d: 'Sensors feel the world around them: heat, tilt, touch, magnets, gas, movement and a remote control.', s: [
+      'Pick a <b>sensor</b> (for example the magnetic one) and put it in a circuit with a resistor and an LED.',
+      'Modules (accelerometer, gyroscope, IR receiver) have legs +, S, −: + to plus, − to minus, and S through a resistor to the LED.',
+      'Simulate and change the surroundings with the controls above the breadboard — the LED should turn on and off.'] }
+  ]
+}
+};
+for (const k in X) {
+  const T = I18N[k], E = X[k];
+  Object.assign(T.ui, E.ui); Object.assign(T.cats, E.cats); Object.assign(T.parts, E.parts); Object.assign(T.info, E.info);
+  T.pinNames = E.pinNames;
+  T.lessons = T.lessons.concat(E.lessons);
+  T.ui.helpItems = T.ui.helpItems.concat([E.helpExtra]);
+}
+})();
+</script>
 <script>/* Core: breadboard geometry, circuit solver, lessons. No DOM. */
 const CORE = (() => {
   const COLS = 30, P = 22, X0 = 120;
   const TERM = 'abcdefghij';
   const ROWY = { tp: 40, tn: 62, a: 110, b: 132, c: 154, d: 176, e: 198, f: 250, g: 272, h: 294, i: 316, j: 338, bp: 386, bn: 408 };
   const ROWS = Object.keys(ROWY);
-  const PINS = { wire: 2, resistor: 2, led: 2, diode: 2, bulb: 2, buzzer: 2, motor: 2, button: 2, switch: 2, pot: 3, ldr: 2, ammeter: 2, voltmeter: 2 };
+  const PINS = {
+    wire: 2, battery: 2, lemon: 2, potato: 2,
+    resistor: 2, pot: 3, capacitor: 2, diode: 2,
+    led: 2, rgb: 4, bulb: 2, buzzer: 2, motor: 2, valve: 2,
+    button: 2, switch: 2, spdt: 3, npn: 3, relay: 4,
+    ldr: 2, ntc: 2, tilt: 2, touch: 2, reed: 2, gas: 2,
+    accel: 3, gyro: 3, irrx: 3,
+    ammeter: 2, voltmeter: 2, multimeter: 2,
+  };
+  /* parts whose pins sit in neighbouring holes of one row */
+  const ROWPART = { pot: 1, rgb: 1, spdt: 1, npn: 1, relay: 1, accel: 1, gyro: 1, irrx: 1 };
+  const PINLBL = { pot: ['1', 'W', '2'], rgb: ['R', '−', 'G', 'B'], spdt: ['A', 'C', 'B'], npn: ['E', 'B', 'C'], relay: ['~', '~', 'C', 'NO'], accel: ['+', 'S', '−'], gyro: ['+', 'S', '−'], irrx: ['+', 'S', '−'] };
   const LEDVF = { red: 1.8, yellow: 2.0, green: 2.1, blue: 3.0, white: 3.0 };
-  const BAT_V = 9, BAT_R = 0.5, POT_R = 10000;
+  const RGBVF = [1.9, 2.8, 2.9];
+  const BAT_V = 9, BAT_R = 0.5, POT_R = 10000, BETA = 100, RBE = 50;
+  const SRC = { battery: [9, 0.5], lemon: [0.95, 300], potato: [0.85, 600] };
+  const LIT = 0.0005;
 
   const holePos = h => { const [r, c] = h.split(':'); return { x: X0 + (+c) * P, y: ROWY[r] }; };
   const holeNet = h => { const [r, c] = h.split(':'); return r.length === 2 ? r : ('abcde'.includes(r) ? 'U' : 'L') + c; };
   const allHoles = () => { const a = []; for (const r of ROWS) for (let c = 0; c < COLS; c++) a.push(r + ':' + c); return a; };
   const ldrR = light => Math.pow(10, Math.log10(50000) + (Math.log10(150) - Math.log10(50000)) * light);
+  const ntcR = T => 10000 * Math.exp(3950 * (1 / (T + 273.15) - 1 / 298.15));
+  const gasR = g => Math.pow(10, Math.log10(60000) + (Math.log10(800) - Math.log10(60000)) * g);
 
   function gauss(M, b) {
     const n = b.length;
@@ -797,141 +1187,233 @@ const CORE = (() => {
     return x;
   }
 
-  /* opt: {light, button:bool|undefined, switch:bool|undefined, pot:number|undefined} */
+  /* opt: light 0..1, temp °C, tilt 0..90, rot 0..1, gas 0..1, magnet bool, ir bool,
+     button/switch/touch/spdt/pot overrides, dt (s) + capV {id: V} for capacitor transients */
   function solve(circ, opt = {}) {
     const parts = circ.parts || [];
-    const light = opt.light ?? circ.light ?? 0.7;
+    const env = {
+      light: opt.light ?? circ.light ?? 0.7, temp: opt.temp ?? 22, tilt: opt.tilt ?? 0, rot: opt.rot ?? 0,
+      gas: opt.gas ?? 0, magnet: !!opt.magnet, ir: !!opt.ir,
+    };
     const nets = new Set(['tp', 'tn']);
     for (const p of parts) for (const h of p.pins) nets.add(holeNet(h));
     const idx = {}; let n = 0;
     for (const k of nets) if (k !== 'tn') idx[k] = n++;
     const ix = k => (k === 'tn' ? -1 : idx[k]);
-    // element: {a,b,G,E,pid,sub,diode?:{Vf,Ron},on}
-    const els = [];
-    const add = (a, b, G, E, pid, sub) => { const e = { a: ix(a), b: ix(b), G, E: E || 0, pid, sub }; els.push(e); return e; };
+    const lin = [], devs = [], outs = [];
+    const add = (a, b, G, E, pid, sub) => { const e = { a: ix(a), b: ix(b), G, E: E || 0, pid, sub }; lin.push(e); return e; };
+    const addD = (a, b, Vf, Ron, pid, sub) => devs.push({ k: 'd', a: ix(a), b: ix(b), Vf, Ron, on: false, pid, sub });
     add('tp', 'tn', 1 / BAT_R, BAT_V, '_bat');
-    const diodes = [];
-    const addD = (a, b, Vf, Ron, pid) => { const e = add(a, b, 1e-9, 0, pid); e.diode = { Vf, Ron }; e.on = false; diodes.push(e); };
     for (const p of parts) {
       const N = p.pins.map(holeNet), pr = p.props || {};
+      const closed = (cond, G = 50) => { if (cond) add(N[0], N[1], G, 0, p.id); };
       switch (p.type) {
         case 'wire': add(N[0], N[1], 1000, 0, p.id); break;
+        case 'battery': case 'lemon': case 'potato': { const [V, R] = SRC[p.type]; add(N[0], N[1], 1 / R, V, p.id); break; }
         case 'resistor': add(N[0], N[1], 1 / (pr.R || 330), 0, p.id); break;
+        case 'capacitor': {
+          const C = (pr.C || 1000) * 1e-6;
+          if (opt.dt) add(N[0], N[1], C / opt.dt, (opt.capV && opt.capV[p.id]) || 0, p.id);
+          else add(N[0], N[1], 1e-9, 0, p.id);
+          break;
+        }
         case 'led': if (!pr.burned) addD(N[0], N[1], LEDVF[pr.color || 'red'], 15, p.id); break;
+        case 'rgb': if (!pr.burned) { addD(N[0], N[1], RGBVF[0], 15, p.id, 0); addD(N[2], N[1], RGBVF[1], 15, p.id, 1); addD(N[3], N[1], RGBVF[2], 15, p.id, 2); } break;
         case 'diode': addD(N[0], N[1], 0.7, 1, p.id); break;
         case 'buzzer': addD(N[0], N[1], 1.5, 250, p.id); break;
         case 'bulb': add(N[0], N[1], 1 / 60, 0, p.id); break;
         case 'motor': add(N[0], N[1], 1 / 25, 0, p.id); break;
-        case 'ldr': add(N[0], N[1], 1 / ldrR(light), 0, p.id); break;
+        case 'valve': add(N[0], N[1], 1 / 40, 0, p.id); break;
+        case 'ldr': add(N[0], N[1], 1 / ldrR(env.light), 0, p.id); break;
+        case 'ntc': add(N[0], N[1], 1 / ntcR(env.temp), 0, p.id); break;
+        case 'gas': add(N[0], N[1], 1 / gasR(env.gas), 0, p.id); break;
+        case 'tilt': closed(env.tilt >= 45); break;
+        case 'reed': closed(env.magnet); break;
+        case 'touch': closed(opt.touch ?? !!pr.pressed, 1 / 100); break;
         case 'ammeter': add(N[0], N[1], 20, 0, p.id); break;
         case 'voltmeter': add(N[0], N[1], 1e-7, 0, p.id); break;
-        case 'button': { const on = opt.button ?? !!pr.pressed; if (on) add(N[0], N[1], 50, 0, p.id); break; }
-        case 'switch': { const on = opt.switch ?? !!pr.on; if (on) add(N[0], N[1], 50, 0, p.id); break; }
+        case 'multimeter': add(N[0], N[1], (pr.mode || 'V') === 'A' ? 20 : 1e-7, 0, p.id); break;
+        case 'button': closed(opt.button ?? !!pr.pressed); break;
+        case 'switch': closed(opt.switch ?? !!pr.on); break;
+        case 'spdt': { const pos = opt.spdt ?? (pr.pos ? 1 : 0); add(N[1], pos ? N[2] : N[0], 50, 0, p.id); break; }
         case 'pot': {
           const pos = opt.pot ?? (pr.pos ?? 0.5);
           add(N[0], N[1], 1 / Math.max(pos * POT_R, 1), 0, p.id, 'aw');
           add(N[1], N[2], 1 / Math.max((1 - pos) * POT_R, 1), 0, p.id, 'wb');
           break;
         }
+        case 'npn': devs.push({ k: 'q', e: ix(N[0]), b: ix(N[1]), c: ix(N[2]), mode: 'off', pid: p.id }); break;
+        case 'relay': {
+          const coil = add(N[0], N[1], 1 / 150, 0, p.id, 'coil');
+          devs.push({ k: 'k', a: ix(N[2]), b: ix(N[3]), coil, closed: false, pid: p.id });
+          break;
+        }
+        case 'accel': case 'gyro': case 'irrx': {
+          const f = p.type === 'accel' ? env.tilt / 90 : p.type === 'gyro' ? env.rot : env.ir ? 1 : 0;
+          add(N[0], N[2], 1 / 2000, 0, p.id, 'supply');
+          outs.push({ o: ix(N[1]), p: ix(N[0]), m: ix(N[2]), f, G: 1 / 100, pid: p.id });
+          break;
+        }
       }
     }
     let V = [];
+    const vv = i => (i < 0 ? 0 : V[i]);
     const run = () => {
       const M = Array.from({ length: n }, () => new Array(n).fill(0)), rhs = new Array(n).fill(0);
       for (let i = 0; i < n; i++) M[i][i] += 1e-9;
-      for (const e of els) {
-        let G = e.G, E = e.E;
-        if (e.diode) { if (e.on) { G = 1 / e.diode.Ron; E = e.diode.Vf; } else { G = 1e-9; E = 0; } }
-        const { a, b } = e;
+      const ge = (a, b, G, E) => {
         if (a >= 0) { M[a][a] += G; rhs[a] += G * E; }
         if (b >= 0) { M[b][b] += G; rhs[b] -= G * E; }
         if (a >= 0 && b >= 0) { M[a][b] -= G; M[b][a] -= G; }
+      };
+      const m = (r, c, v) => { if (r >= 0 && c >= 0) M[r][c] += v; };
+      for (const e of lin) ge(e.a, e.b, e.G, e.E);
+      for (const o of outs) { // current o->m = G*(Vo - Vm - f*(Vp - Vm))
+        m(o.o, o.o, o.G); m(o.o, o.p, -o.G * o.f); m(o.o, o.m, -o.G * (1 - o.f));
+        m(o.m, o.o, -o.G); m(o.m, o.p, o.G * o.f); m(o.m, o.m, o.G * (1 - o.f));
+      }
+      for (const d of devs) {
+        if (d.k === 'd') { if (d.on) ge(d.a, d.b, 1 / d.Ron, d.Vf); }
+        else if (d.k === 'k') { if (d.closed) ge(d.a, d.b, 50, 0); }
+        else if (d.k === 'q' && d.mode !== 'off') {
+          ge(d.b, d.e, 1 / RBE, 0.65);
+          if (d.mode === 'act') { // current c->e = gm*(Vb - Ve - 0.65)
+            const gm = BETA / RBE;
+            m(d.c, d.b, gm); m(d.c, d.e, -gm); if (d.c >= 0) rhs[d.c] += gm * 0.65;
+            m(d.e, d.b, -gm); m(d.e, d.e, gm); if (d.e >= 0) rhs[d.e] -= gm * 0.65;
+          } else ge(d.c, d.e, 0.5, 0.1);
+        }
       }
       V = gauss(M, rhs);
     };
-    const vv = i => (i < 0 ? 0 : V[i]);
-    for (let it = 0; it < 400; it++) {
+    const qI = d => {
+      const Vbe = vv(d.b) - vv(d.e), Vce = vv(d.c) - vv(d.e);
+      const Ib = d.mode === 'off' ? 0 : (Vbe - 0.65) / RBE;
+      const Ic = d.mode === 'act' ? BETA * Ib : d.mode === 'sat' ? 0.5 * (Vce - 0.1) : 0;
+      return { Ib, Ic, Vbe, Vce };
+    };
+    const linI = e => e.G * (vv(e.a) - vv(e.b) - e.E);
+    for (let it = 0; it < 500; it++) {
       run();
-      let worst = null, wv = 1e-7;
-      for (const d of diodes) {
-        const Vd = vv(d.a) - vv(d.b);
-        let viol = 0;
-        if (d.on) { const I = (Vd - d.diode.Vf) / d.diode.Ron; if (I < 0) viol = -I * d.diode.Ron; }
-        else if (Vd > d.diode.Vf) viol = Vd - d.diode.Vf;
-        if (viol > wv) { wv = viol; worst = d; }
+      let worst = null, wv = 1e-7, next = null;
+      const cand = (d, v, nx) => { if (v > wv) { wv = v; worst = d; next = nx; } };
+      for (const d of devs) {
+        if (d.k === 'd') {
+          const Vd = vv(d.a) - vv(d.b);
+          if (d.on) { const I = (Vd - d.Vf) / d.Ron; if (I < 0) cand(d, -I * d.Ron, false); }
+          else if (Vd > d.Vf) cand(d, Vd - d.Vf, true);
+        } else if (d.k === 'k') {
+          const Ic = Math.abs(linI(d.coil));
+          if (!d.closed && Ic > 0.035) cand(d, (Ic - 0.035) * 100, true);
+          if (d.closed && Ic < 0.025) cand(d, (0.025 - Ic) * 100, false);
+        } else if (d.k === 'q') {
+          const { Ib, Ic, Vbe, Vce } = qI(d);
+          if (d.mode === 'off') { if (Vbe > 0.65) cand(d, Vbe - 0.65, Vce > 0.1 ? 'act' : 'sat'); }
+          else if (Ib < 0) cand(d, -Ib * RBE, 'off');
+          else if (d.mode === 'act' && Vce < 0.1) cand(d, 0.1 - Vce, 'sat');
+          else if (d.mode === 'sat' && Ic > BETA * Ib) cand(d, (Ic - BETA * Ib) * 2, 'act');
+        }
       }
       if (!worst) break;
-      worst.on = !worst.on;
+      if (worst.k === 'd') worst.on = next; else if (worst.k === 'k') worst.closed = next; else worst.mode = next;
     }
-    const cur = e => {
-      let G = e.G, E = e.E;
-      if (e.diode) { if (e.on) { G = 1 / e.diode.Ron; E = e.diode.Vf; } else { G = 1e-9; E = 0; } }
-      return G * (vv(e.a) - vv(e.b) - E);
-    };
-    const res = { parts: {}, batI: 0, short: false, netV: {}, pinNet: {}, netPins: {} };
-    const uf = {}; const fd = x => { if (uf[x] === undefined) uf[x] = x; while (uf[x] !== x) { uf[x] = uf[uf[x]]; x = uf[x]; } return x; };
-    for (const p of parts) if (p.type === 'wire') { const a = fd(holeNet(p.pins[0])), b = fd(holeNet(p.pins[1])); if (a !== b) uf[a] = b; }
+    const res = { parts: {}, batI: 0, short: false, netV: {}, pinNet: {}, netPins: {}, env };
     for (const k of nets) res.netV[k] = vv(ix(k));
-    for (const e of els) {
-      if (e.pid === '_bat') { res.batI = -cur(e); continue; }
-      const I = cur(e);
-      const r = res.parts[e.pid] || (res.parts[e.pid] = { I: 0 });
-      if (e.sub === 'aw') r.Iaw = I; else if (e.sub === 'wb') r.Iwb = I; else r.I = I;
+    const R = id => res.parts[id] || (res.parts[id] = { I: 0 });
+    for (const e of lin) {
+      if (e.pid === '_bat') { res.batI = -linI(e); continue; }
+      const I = linI(e), r = R(e.pid);
+      if (e.sub === 'aw') r.Iaw = I; else if (e.sub === 'wb') r.Iwb = I; else if (e.sub === 'coil') r.Icoil = I; else if (e.sub === 'supply') r.Isup = I; else r.I = I;
     }
-    res.short = res.batI > 1.5;
+    for (const d of devs) {
+      const r = R(d.pid);
+      if (d.k === 'd') { const I = d.on ? (vv(d.a) - vv(d.b) - d.Vf) / d.Ron : 0; if (d.sub === undefined) r.I = I; else (r.ch || (r.ch = [0, 0, 0]))[d.sub] = I; }
+      else if (d.k === 'k') { r.closed = d.closed; r.I = d.closed ? 50 * (vv(d.a) - vv(d.b)) : 0; }
+      else { const q = qI(d); r.mode = d.mode; r.Ib = q.Ib; r.Ic = q.Ic; r.I = q.Ic; }
+    }
+    for (const o of outs) { const r = R(o.pid); r.out = vv(o.o) - vv(o.m); r.f = o.f; }
     for (const p of parts) {
-      const r = res.parts[p.id] || (res.parts[p.id] = { I: 0 });
+      const r = R(p.id);
       const N = p.pins.map(holeNet);
-      const G = N.map(fd);
-      res.pinNet[p.id] = G;
-      if (p.type !== 'wire' && p.type !== 'voltmeter') for (const k of G) res.netPins[k] = (res.netPins[k] || 0) + 1;
       r.V = res.netV[N[0]] - res.netV[N[1]];
       const I = r.I || 0, pr = p.props || {};
       switch (p.type) {
         case 'led':
           if (pr.burned) { r.lit = false; r.bright = 0; break; }
-          r.lit = I > 0.0015; r.bright = Math.min(1, Math.max(0, I / 0.02)); r.burn = I > 0.06; break;
+          r.lit = I > LIT; r.bright = Math.min(1, Math.sqrt(Math.max(0, I) / 0.02)); r.burn = I > 0.06; break;
+        case 'rgb': {
+          const ch = r.ch || [0, 0, 0];
+          if (pr.burned) { r.lit = false; r.rgb = [0, 0, 0]; break; }
+          r.rgb = ch.map(x => Math.min(1, Math.sqrt(Math.max(0, x) / 0.015)));
+          r.nlit = ch.filter(x => x > LIT).length; r.lit = r.nlit > 0; r.burn = ch.some(x => x > 0.06); break;
+        }
         case 'bulb': r.bright = Math.min(1.2, Math.abs(I) / 0.15); r.lit = r.bright > 0.15; break;
         case 'motor': r.speed = I / 0.36; r.spinning = Math.abs(I) > 0.05; break;
+        case 'valve': r.open = Math.abs(I) > 0.1; break;
         case 'buzzer': r.sounding = I > 0.003; break;
         case 'diode': r.conducting = I > 0.001; break;
         case 'ammeter': r.reading = I * 1000; break;
         case 'voltmeter': r.reading = r.V; break;
+        case 'multimeter': r.reading = (pr.mode || 'V') === 'A' ? I * 1000 : r.V; break;
       }
     }
-    res.flowing = res.batI > 1e-5;
+    // groups of nets joined by wires (for topology checks)
+    const uf = {}; const fd = x => { if (uf[x] === undefined) uf[x] = x; while (uf[x] !== x) { uf[x] = uf[uf[x]]; x = uf[x]; } return x; };
+    for (const p of parts) if (p.type === 'wire') { const a = fd(holeNet(p.pins[0])), b = fd(holeNet(p.pins[1])); if (a !== b) uf[a] = b; }
+    for (const p of parts) {
+      const G = p.pins.map(h => fd(holeNet(h)));
+      res.pinNet[p.id] = G;
+      if (p.type !== 'wire' && p.type !== 'voltmeter' && p.type !== 'multimeter') for (const k of G) res.netPins[k] = (res.netPins[k] || 0) + 1;
+    }
+    res.short = res.batI > 1.5 || parts.some(p => p.type === 'battery' && Math.abs(res.parts[p.id].I) > 1.5);
+    res.flowing = res.batI > 1e-5 || parts.some(p => SRC[p.type] && Math.abs(res.parts[p.id].I) > 1e-5);
     return res;
+  }
+
+  /* run a transient for `secs`, updating capV in place */
+  function transient(circ, opt, capV, secs, dt = 1 / 30) {
+    let r = null;
+    const caps = circ.parts.filter(p => p.type === 'capacitor');
+    for (let t = 0; t < secs - 1e-9; t += dt) {
+      r = solve(circ, Object.assign({}, opt, { dt, capV }));
+      for (const p of caps) capV[p.id] = r.parts[p.id].V;
+    }
+    return r || solve(circ, Object.assign({}, opt, { dt, capV }));
   }
 
   /* ---------- lesson helpers ---------- */
   const has = (c, t) => c.parts.some(p => p.type === t);
   const ofType = (c, t) => c.parts.filter(p => p.type === t);
   const ok = r => !r.short && !Object.values(r.parts).some(x => x.burn);
-  const litLeds = (c, r) => ofType(c, 'led').filter(p => r.parts[p.id] && r.parts[p.id].lit);
+  const litLeds = (c, r) => c.parts.filter(p => (p.type === 'led' || p.type === 'rgb') && r.parts[p.id] && r.parts[p.id].lit);
   const ledI = (c, r) => ofType(c, 'led').reduce((s, p) => s + Math.max(0, (r.parts[p.id] || {}).I || 0), 0);
+  const active = (c, r) => c.parts.filter(p => { const x = r.parts[p.id] || {}; return ((p.type === 'led' || p.type === 'rgb' || p.type === 'bulb') && x.lit) || x.spinning || x.sounding || x.open; }).length;
+  const SENSOR_ENV = { ntc: [{ temp: -10 }, { temp: 60 }], tilt: [{ tilt: 0 }, { tilt: 90 }], reed: [{ magnet: false }, { magnet: true }], gas: [{ gas: 0 }, { gas: 1 }], touch: [{ touch: false }, { touch: true }], accel: [{ tilt: 0 }, { tilt: 90 }], gyro: [{ rot: 0 }, { rot: 1 }], irrx: [{ ir: false }, { ir: true }] };
 
-  const H = (r, c) => r + ':' + c;
   const W = (a, b) => ({ type: 'wire', pins: [a, b], props: {} });
   const Rr = (a, b, R = 330) => ({ type: 'resistor', pins: [a, b], props: { R } });
   const L = (a, b, color = 'red') => ({ type: 'led', pins: [a, b], props: { color } });
   const X = (type, a, b, props = {}) => ({ type, pins: [a, b], props });
+  const RP = (type, row, c0, props = {}) => ({ type, pins: Array.from({ length: PINS[type] }, (_, k) => row + ':' + (c0 + k)), props });
   const basic = [W('tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:7', 'c:10'), W('a:10', 'tn:10')];
+  const twoState = (c, s, A, B, pred) => { const a = s(c, A), b = s(c, B); return ok(a) && pred(a, true) && pred(b, false); };
+  const gnd2 = W('tn:28', 'bn:28');
 
   const LESSONS = [
     { id: 'led', unlock: ['wire', 'resistor', 'led'],
       check: (c, s, r) => ok(r) && has(c, 'resistor') && litLeds(c, r).length >= 1,
       solution: basic },
     { id: 'button', unlock: ['button'],
-      check: (c, s, r) => { if (!has(c, 'button')) return false; const on = s(c, { button: true }), off = s(c, { button: false }); return ok(on) && litLeds(c, on).length >= 1 && litLeds(c, off).length === 0 && litLeds(c, r).length >= 1; },
+      check: (c, s, r) => has(c, 'button') && twoState(c, s, { button: true }, { button: false }, (x, on) => on ? litLeds(c, x).length >= 1 : litLeds(c, x).length === 0) && litLeds(c, r).length >= 1,
       solution: [X('button', 'tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:7', 'c:10'), W('a:10', 'tn:10')] },
-    { id: 'switch', unlock: ['switch'],
-      check: (c, s, r) => { if (!has(c, 'switch')) return false; const on = s(c, { switch: true }), off = s(c, { switch: false }); return ok(on) && litLeds(c, on).length >= 1 && litLeds(c, off).length === 0 && litLeds(c, r).length >= 1; },
+    { id: 'switch', unlock: ['switch', 'spdt'],
+      check: (c, s, r) => has(c, 'switch') && twoState(c, s, { switch: true }, { switch: false }, (x, on) => on ? litLeds(c, x).length >= 1 : litLeds(c, x).length === 0) && litLeds(c, r).length >= 1,
       solution: [X('switch', 'tp:2', 'a:2', { on: true }), Rr('b:2', 'b:7'), L('c:7', 'c:10'), W('a:10', 'tn:10')] },
     { id: 'parallel', unlock: [],
-      check: (c, s, r) => { if (!ok(r)) return false; const lit = litLeds(c, r); for (let i = 0; i < lit.length; i++) for (let j = i + 1; j < lit.length; j++) if (r.pinNet[lit[i].id][1] === r.pinNet[lit[j].id][1] && r.pinNet[lit[i].id][0] !== r.pinNet[lit[j].id][1]) return true; return false; },
+      check: (c, s, r) => { if (!ok(r)) return false; const lit = litLeds(c, r).filter(p => p.type === 'led'); for (let i = 0; i < lit.length; i++) for (let j = i + 1; j < lit.length; j++) if (r.pinNet[lit[i].id][1] === r.pinNet[lit[j].id][1] && r.pinNet[lit[i].id][0] !== r.pinNet[lit[j].id][1]) return true; return false; },
       solution: [...basic, W('tp:14', 'a:14'), Rr('b:14', 'b:19'), L('c:19', 'c:22', 'green'), W('a:22', 'tn:22')] },
     { id: 'series', unlock: [],
-      check: (c, s, r) => { if (!ok(r)) return false; const lit = litLeds(c, r); for (const A of lit) for (const B of lit) if (A !== B) { const k = r.pinNet[A.id][1]; if (k === r.pinNet[B.id][0] && r.netPins[k] === 2) return true; } return false; },
+      check: (c, s, r) => { if (!ok(r)) return false; const lit = litLeds(c, r).filter(p => p.type === 'led'); for (const A of lit) for (const B of lit) if (A !== B) { const k = r.pinNet[A.id][1]; if (k === r.pinNet[B.id][0] && r.netPins[k] === 2) return true; } return false; },
       solution: [W('tp:2', 'a:2'), Rr('b:2', 'b:7', 220), L('c:7', 'c:10'), L('d:10', 'd:13', 'yellow'), W('a:13', 'tn:13')] },
     { id: 'bulb', unlock: ['bulb'],
       check: (c, s, r) => ok(r) && ofType(c, 'bulb').some(p => r.parts[p.id].lit),
@@ -944,18 +1426,18 @@ const CORE = (() => {
       solution: [W('tp:3', 'a:3'), X('motor', 'b:3', 'b:8'), W('a:8', 'tn:8')] },
     { id: 'pot', unlock: ['pot'],
       check: (c, s, r) => { if (!has(c, 'pot')) return false; const A = s(c, { pot: 0.15 }), B = s(c, { pot: 0.85 }); if (!ok(A) || !ok(B)) return false; const ia = ledI(c, A), ib = ledI(c, B); return (litLeds(c, A).length || litLeds(c, B).length) && Math.abs(ia - ib) > 0.3 * Math.max(ia, ib); },
-      solution: [{ type: 'pot', pins: ['a:2', 'a:3', 'a:4'], props: { pos: 0.1 } }, W('tp:2', 'b:2'), Rr('c:3', 'c:8'), L('d:8', 'd:11'), W('a:11', 'tn:11')] },
+      solution: [RP('pot', 'a', 2, { pos: 0.1 }), W('tp:2', 'b:2'), Rr('c:3', 'c:8'), L('d:8', 'd:11'), W('a:11', 'tn:11')] },
     { id: 'ldr', unlock: ['ldr'],
       check: (c, s, r) => { if (!has(c, 'ldr')) return false; const A = s(c, { light: 0.1 }), B = s(c, { light: 0.95 }); if (!ok(A) || !ok(B)) return false; const ia = ledI(c, A), ib = ledI(c, B); return (litLeds(c, A).length || litLeds(c, B).length) && Math.abs(ia - ib) > 0.3 * Math.max(ia, ib); },
       solution: [W('tp:2', 'a:2'), X('ldr', 'b:2', 'b:6'), Rr('c:6', 'c:10', 220), L('d:10', 'd:13'), W('a:13', 'tn:13')] },
     { id: 'diode', unlock: ['diode'],
       check: (c, s, r) => ok(r) && ofType(c, 'diode').some(p => r.parts[p.id].conducting) && litLeds(c, r).length >= 1,
       solution: [W('tp:2', 'a:2'), X('diode', 'b:2', 'b:6'), Rr('c:6', 'c:10'), L('d:10', 'd:13', 'green'), W('a:13', 'tn:13')] },
-    { id: 'ammeter', unlock: ['ammeter'],
-      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && ofType(c, 'ammeter').some(p => Math.abs(r.parts[p.id].reading) > 1),
+    { id: 'ammeter', unlock: ['ammeter', 'multimeter'],
+      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && c.parts.some(p => (p.type === 'ammeter' || (p.type === 'multimeter' && p.props.mode === 'A')) && Math.abs(r.parts[p.id].reading) > 0.5),
       solution: [W('tp:2', 'a:2'), X('ammeter', 'b:2', 'b:6'), Rr('c:6', 'c:10'), L('d:10', 'd:13'), W('a:13', 'tn:13')] },
     { id: 'voltmeter', unlock: ['voltmeter'],
-      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && ofType(c, 'voltmeter').some(p => Math.abs(r.parts[p.id].reading) > 1),
+      check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && c.parts.some(p => (p.type === 'voltmeter' || (p.type === 'multimeter' && (p.props.mode || 'V') === 'V')) && Math.abs(r.parts[p.id].reading) > 1),
       solution: [...basic, X('voltmeter', 'e:7', 'e:10')] },
     { id: 'repair', unlock: [],
       preset: [W('tp:2', 'a:2'), Rr('b:2', 'b:7'), L('c:10', 'c:7', 'blue'), W('a:10', 'tn:10')],
@@ -964,28 +1446,70 @@ const CORE = (() => {
     { id: 'finale', unlock: [],
       check: (c, s, r) => ok(r) && litLeds(c, r).length >= 1 && ofType(c, 'motor').some(p => r.parts[p.id].spinning) && ofType(c, 'buzzer').some(p => r.parts[p.id].sounding),
       solution: [W('tp:2', 'a:2'), X('motor', 'b:2', 'b:6'), W('a:6', 'tn:6'), W('tp:9', 'a:9'), Rr('b:9', 'b:13'), L('c:13', 'c:16'), W('a:16', 'tn:16'), W('tp:19', 'a:19'), X('buzzer', 'b:19', 'b:24'), W('a:24', 'tn:24')] },
+    /* ---- 16+ ---- */
+    { id: 'fruit', unlock: ['lemon', 'potato', 'battery'],
+      check: (c, s, r) => ok(r) && (has(c, 'lemon') || has(c, 'potato')) && Math.abs(r.batI) < 1e-4 && litLeds(c, r).length >= 1,
+      solution: [X('lemon', 'f:2', 'f:5'), X('lemon', 'g:5', 'g:8'), X('lemon', 'h:8', 'h:11'), L('i:2', 'i:14'), W('j:14', 'j:11')] },
+    { id: 'capacitor', unlock: ['capacitor'],
+      check: (c, s, r) => {
+        if (!has(c, 'capacitor') || !has(c, 'button')) return false;
+        const capV = {}, base = { light: r.env.light };
+        const a = transient(c, Object.assign({ button: true }, base), capV, 3); if (!ok(a) || !litLeds(c, a).length) return false;
+        const b = transient(c, Object.assign({ button: false }, base), capV, 0.3); if (!litLeds(c, b).length) return false;
+        const z = transient(c, Object.assign({ button: false }, base), capV, 12); return litLeds(c, z).length === 0;
+      },
+      solution: [X('button', 'tp:2', 'a:2'), X('capacitor', 'b:2', 'tn:4', { C: 2200 }), Rr('c:2', 'c:7'), L('d:7', 'd:10'), W('a:10', 'tn:10')] },
+    { id: 'transistor', unlock: ['npn'],
+      check: (c, s, r) => has(c, 'npn') && has(c, 'button') && twoState(c, s, { button: true }, { button: false }, (x, on) => {
+        const q = ofType(c, 'npn').some(p => Math.abs(x.parts[p.id].Ic || 0) > 0.005);
+        return on ? q && active(c, x) >= 1 : !q && active(c, x) === 0;
+      }),
+      solution: [RP('npn', 'f', 10), X('button', 'tp:5', 'a:5'), Rr('b:5', 'b:11', 10000), W('c:11', 'g:11'), W('tp:16', 'a:16'), X('bulb', 'b:16', 'b:20'), W('c:20', 'h:12'), W('j:10', 'bn:10'), gnd2] },
+    { id: 'nightlight', unlock: [],
+      check: (c, s, r) => has(c, 'npn') && has(c, 'ldr') && twoState(c, s, { light: 0.05 }, { light: 0.95 }, (x, dark) => dark ? litLeds(c, x).length >= 1 : litLeds(c, x).length === 0),
+      solution: [W('tp:4', 'a:4'), Rr('b:4', 'b:8', 10000), X('ldr', 'c:8', 'tn:8'), Rr('d:8', 'f:11', 1000), RP('npn', 'g', 10), W('h:10', 'bn:10'), gnd2, W('tp:16', 'a:16'), Rr('b:16', 'b:20'), L('c:20', 'f:20'), W('g:20', 'i:12')] },
+    { id: 'relay', unlock: ['relay'],
+      check: (c, s, r) => has(c, 'relay') && has(c, 'button') && twoState(c, s, { button: true }, { button: false }, (x, on) => {
+        const k = ofType(c, 'relay').some(p => x.parts[p.id].closed);
+        return on ? k && active(c, x) >= 1 : !k && active(c, x) === 0;
+      }),
+      solution: [X('button', 'tp:4', 'a:4'), RP('relay', 'f', 4), W('e:4', 'g:4'), W('h:5', 'bn:5'), gnd2, W('tp:12', 'a:12'), W('b:12', 'h:6'), X('motor', 'i:7', 'i:12'), W('j:12', 'bn:12')] },
+    { id: 'rgb', unlock: ['rgb'],
+      check: (c, s, r) => ok(r) && ofType(c, 'rgb').some(p => r.parts[p.id].nlit >= 2),
+      solution: [RP('rgb', 'f', 10), W('tp:4', 'a:4'), Rr('b:4', 'g:10'), W('tp:6', 'a:6'), Rr('b:6', 'g:12', 220), W('tp:14', 'a:14'), Rr('b:14', 'g:13', 220), W('h:11', 'bn:11'), gnd2] },
+    { id: 'sensors', unlock: ['ntc', 'tilt', 'touch', 'reed', 'gas', 'valve', 'accel', 'gyro', 'irrx'],
+      check: (c, s, r) => {
+        for (const ty in SENSOR_ENV) if (has(c, ty)) { const [A, B] = SENSOR_ENV[ty]; const a = s(c, A), b = s(c, B); if (ok(a) && ok(b) && active(c, a) !== active(c, b)) return true; }
+        return false;
+      },
+      solution: [W('tp:2', 'a:2'), X('reed', 'b:2', 'b:6'), Rr('c:6', 'c:10'), L('d:10', 'd:13', 'green'), W('a:13', 'tn:13')] },
   ];
 
   const ALL_TYPES = Object.keys(PINS);
-  return { COLS, P, X0, ROWY, ROWS, TERM, PINS, LEDVF, holePos, holeNet, allHoles, ldrR, solve, LESSONS, ALL_TYPES, H };
+  return { COLS, P, X0, ROWY, ROWS, TERM, PINS, ROWPART, PINLBL, LEDVF, holePos, holeNet, allHoles, ldrR, ntcR, solve, transient, LESSONS, ALL_TYPES, SENSOR_ENV };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;
 </script>
 <script>(() => {
 const C = CORE, $ = s => document.querySelector(s);
-const NS = 'http://www.w3.org/2000/svg';
 const CATS = [
-  ['power', ['wire']],
-  ['passive', ['resistor', 'pot', 'diode']],
-  ['out', ['led', 'bulb', 'buzzer', 'motor']],
-  ['sw', ['button', 'switch']],
-  ['sens', ['ldr']],
-  ['tools', ['ammeter', 'voltmeter']],
+  ['power', ['wire', 'battery', 'lemon', 'potato']],
+  ['passive', ['resistor', 'pot', 'capacitor', 'diode']],
+  ['out', ['led', 'rgb', 'bulb', 'buzzer', 'motor', 'valve']],
+  ['sw', ['button', 'switch', 'spdt', 'npn', 'relay']],
+  ['sens', ['ldr', 'ntc', 'tilt', 'touch', 'reed', 'gas']],
+  ['motion', ['accel', 'gyro']],
+  ['ir', ['irrx']],
+  ['tools', ['ammeter', 'voltmeter', 'multimeter']],
 ];
-const R_VALUES = [10, 47, 100, 220, 330, 470, 1000, 2200, 4700, 10000];
+const R_VALUES = [10, 47, 100, 220, 330, 470, 1000, 2200, 4700, 10000, 47000, 100000];
+const C_VALUES = [100, 470, 1000, 2200, 4700];
 const LED_COLORS = { red: '#ff3b3b', green: '#35e06b', blue: '#3d8bff', yellow: '#ffd23b', white: '#f4f7ff' };
 const WIRE_COLORS = { red: '#e8463c', black: '#2b2f36', blue: '#3a7bea', green: '#2fb45a', yellow: '#f2c230', orange: '#f28a30' };
 const BAND = ['#111', '#7b3f00', '#d52b2b', '#f07d1a', '#f4d21c', '#26a641', '#2d5be3', '#8e3fd6', '#8a8a8a', '#f5f5f5'];
+const PRESSABLE = { button: 1, touch: 1 };
+const TOGGLEABLE = { switch: 1, spdt: 1 };
+const SOURCES = { battery: 1, lemon: 1, potato: 1 };
 
 /* ---------------- state ---------------- */
 const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
@@ -994,17 +1518,24 @@ const navLang = (navigator.language || 'en').slice(0, 2);
 const S = Object.assign({
   lang: { sr: 'sr', hr: 'sr', bs: 'sr', mk: 'mk', ro: 'ro', bg: 'bg' }[navLang] || 'en',
   mode: 'learn', sound: true, light: 0.7, lesson: 0, done: [],
+  env: { temp: 22, tilt: 0, rot: 0, gas: 0, magnet: false, irFixed: false },
   boards: { free: { parts: [] }, learn: { parts: [] } }, nextId: 1,
 }, load('rk_state', {}));
+S.env = Object.assign({ temp: 22, tilt: 0, rot: 0, gas: 0, magnet: false, irFixed: false }, S.env || {});
 S.tool = 'select'; S.pending = null; S.sel = null; S.sim = false; S.res = null; S.hover = null;
+S.capV = {}; S.irHold = false; S.leak = 0; S.sig = '';
 const hist = { free: { u: [], r: [] }, learn: { u: [], r: [] } };
-const persist = () => store('rk_state', { lang: S.lang, mode: S.mode, sound: S.sound, light: S.light, lesson: S.lesson, done: S.done, boards: S.boards, nextId: S.nextId });
+const persist = () => store('rk_state', { lang: S.lang, mode: S.mode, sound: S.sound, light: S.light, env: S.env, lesson: S.lesson, done: S.done, boards: S.boards, nextId: S.nextId });
 
 const L = () => I18N[S.lang] || I18N.en;
 const t = (k, v) => { let s = L().ui[k] ?? I18N.en.ui[k] ?? k; if (v) for (const x in v) s = s.replace('{' + x + '}', v[x]); return s; };
-const pn = type => L().parts[type];
+const pn = type => L().parts[type] ?? I18N.en.parts[type];
+const pinfo = type => L().info[type] ?? I18N.en.info[type];
+const lessonText = i => L().lessons[i] || I18N.en.lessons[i];
 const board = () => S.boards[S.mode];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const hasType = ty => board().parts.some(p => p.type === ty);
+const envOpts = () => ({ light: S.light, temp: S.env.temp, tilt: S.env.tilt, rot: S.env.rot, gas: Math.max(S.env.gas, S.leak), magnet: S.env.magnet, ir: S.env.irFixed || S.irHold });
 
 /* ---------------- unlocking ---------------- */
 function unlockedTypes() {
@@ -1017,8 +1548,8 @@ const maxLesson = () => { let i = 0; while (i < C.LESSONS.length - 1 && S.done.i
 
 /* ---------------- history ---------------- */
 function snapshot() { const h = hist[S.mode]; h.u.push(JSON.stringify(board().parts)); if (h.u.length > 80) h.u.shift(); h.r = []; }
-function undo() { const h = hist[S.mode]; if (!h.u.length) return; h.r.push(JSON.stringify(board().parts)); board().parts = JSON.parse(h.u.pop()); S.sel = null; changed(); }
-function redo() { const h = hist[S.mode]; if (!h.r.length) return; h.u.push(JSON.stringify(board().parts)); board().parts = JSON.parse(h.r.pop()); S.sel = null; changed(); }
+function undo() { const h = hist[S.mode]; if (!h.u.length) return; h.r.push(JSON.stringify(board().parts)); board().parts = JSON.parse(h.u.pop()); S.sel = null; changed({ palette: true }); }
+function redo() { const h = hist[S.mode]; if (!h.r.length) return; h.u.push(JSON.stringify(board().parts)); board().parts = JSON.parse(h.r.pop()); S.sel = null; changed({ palette: true }); }
 
 /* ---------------- sound ---------------- */
 let actx = null, osc = null, gain = null;
@@ -1051,7 +1582,12 @@ function bands(R) {
   const d1 = Math.floor(R / Math.pow(10, e + 1)) % 10, d2 = Math.round(R / Math.pow(10, e)) % 10;
   return [d1, d2, Math.max(0, e)];
 }
-// body in local coords, horizontal, pin0 on the left. st = sim state for part
+const lcd = (txt, w = 42, y = -11) => `<rect x="${-w / 2}" y="${y}" width="${w}" height="14" rx="2" fill="#bfe3b4"/><text x="0" y="${y + 11}" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="middle" fill="#1d2b18">${txt}</text>`;
+const fmtMeter = (u, st, on) => {
+  if (!on || !st || st.reading === undefined) return '-- ' + (u === 'A' ? 'mA' : 'V');
+  return u === 'A' ? st.reading.toFixed(Math.abs(st.reading) < 10 ? 2 : 1) + ' mA' : st.reading.toFixed(2) + ' V';
+};
+// two-pin bodies in local coords, horizontal, pin0 on the left
 function body(type, pr = {}, st = null, sim = false) {
   const on = sim && st;
   switch (type) {
@@ -1072,6 +1608,13 @@ function body(type, pr = {}, st = null, sim = false) {
     case 'diode':
       return `<rect x="-12" y="-5" width="24" height="10" rx="2" fill="#1b1b1f" stroke="#555"/><rect x="6" y="-5" width="3.5" height="10" fill="#cfd3da"/>` +
         (on && st.conducting ? `<rect x="-12" y="-5" width="24" height="10" rx="2" fill="none" stroke="#4ade80" stroke-width="1.2"/>` : '');
+    case 'capacitor': {
+      const v = on ? Math.abs(st.V || 0) : 0, f = Math.min(1, v / 9);
+      return `<rect x="-9" y="-14" width="18" height="26" rx="6" fill="#2b4f9e" stroke="#16306a"/><rect x="4" y="-14" width="4" height="26" fill="#cfd8ea" opacity=".8"/>` +
+        `<text x="6" y="2" font-size="8" font-weight="900" fill="#1c2f66" text-anchor="middle">−</text>` +
+        `<rect x="-6" y="${10 - 20 * f}" width="7" height="${20 * f}" fill="#ffd166" opacity=".85"/>` +
+        `<text x="-2" y="-17" font-size="8" fill="#5b4a2a" text-anchor="middle" font-weight="700" class="rv">${pr.C || 1000}µF</text>`;
+    }
     case 'bulb': {
       const br = on ? Math.min(1, st.bright || 0) : 0;
       return (br > 0.05 ? `<circle r="${14 + 16 * br}" fill="#ffe27a" opacity="${0.2 + 0.5 * br}" filter="url(#glow)"/>` : '') +
@@ -1089,11 +1632,19 @@ function body(type, pr = {}, st = null, sim = false) {
       const dur = spin ? Math.max(0.12, 0.9 / Math.min(2, Math.abs(sp))) : 0;
       return `<rect x="-14" y="-12" width="28" height="24" rx="5" fill="#8a929e" stroke="#59606b"/>` +
         `<text x="0" y="4" font-size="11" font-weight="800" fill="#2a2e35" text-anchor="middle">M</text>` +
-        `<g transform="translate(0,-20)"><g class="${spin ? 'spin' : ''}" style="animation-duration:${dur}s;animation-direction:${sp < 0 ? 'reverse' : 'normal'}">` +
+        `<g transform="translate(0,-20)"><g class="${spin ? 'spin' : ''}" style="animation-duration:${dur.toFixed(2)}s;animation-direction:${sp < 0 ? 'reverse' : 'normal'}">` +
         `<ellipse rx="13" ry="3.2" fill="#ff7a33"/><ellipse rx="3.2" ry="13" fill="#ffb37a"/><circle r="2.5" fill="#333"/></g></g>`;
     }
-    case 'button': {
+    case 'valve': {
+      const o = on && st.open;
+      return `<rect x="-14" y="-10" width="28" height="20" rx="3" fill="#5c6b7a" stroke="#344150"/><rect x="-6" y="-20" width="12" height="10" rx="2" fill="#9aa6b2"/>` +
+        `<path d="M-14 0 H-22 M14 0 H22" stroke="#9aa6b2" stroke-width="6"/>` +
+        `<circle r="5" fill="${o ? '#4ade80' : '#e05252'}"/>` +
+        (o ? `<g class="waves"><circle cx="20" cy="-14" r="3" fill="#b9f5c8" opacity=".7"/><circle cx="26" cy="-20" r="2" fill="#b9f5c8" opacity=".6"/></g>` : '');
+    }
+    case 'button': case 'touch': {
       const p = pr.pressed;
+      if (type === 'touch') return `<rect x="-12" y="-12" width="24" height="24" rx="5" fill="#173a2e" stroke="#2dd4bf"/><circle r="${p ? 8 : 7}" fill="none" stroke="${p ? '#fff' : '#2dd4bf'}" stroke-width="2"/><circle r="3" fill="${p ? '#fff' : '#2dd4bf'}"/>`;
       return `<rect x="-11" y="-11" width="22" height="22" rx="3" fill="#2a2d33" stroke="#555"/>` +
         `<circle r="${p ? 6 : 7}" fill="${p ? '#e05252' : '#ff6b6b'}" stroke="${p ? '#fff' : '#922'}" stroke-width="${p ? 1.5 : 1}"/>`;
     }
@@ -1105,30 +1656,95 @@ function body(type, pr = {}, st = null, sim = false) {
     }
     case 'ldr':
       return `<circle r="10" fill="#c8813b" stroke="#7d4d1e"/><path d="M-6 -3 H4 V0 H-4 V3 H6" fill="none" stroke="#5a2e0b" stroke-width="1.6"/>`;
+    case 'ntc':
+      return `<ellipse rx="8" ry="10" fill="#2f6fd6" stroke="#174087"/><text x="0" y="4" font-size="10" text-anchor="middle" fill="#fff">🌡</text>`;
+    case 'tilt': {
+      const c = on && S.env.tilt >= 45;
+      return `<rect x="-8" y="-13" width="16" height="22" rx="4" fill="#3a3f48" stroke="#22262c"/><circle cx="0" cy="${c ? 4 : -6}" r="4" fill="#cfd5dd"/><text x="0" y="20" font-size="8" fill="${c ? '#4ade80' : '#8a8677'}" text-anchor="middle">${c ? 'ON' : 'OFF'}</text>`;
+    }
+    case 'reed': {
+      const c = on && S.env.magnet;
+      return `<rect x="-15" y="-5" width="30" height="10" rx="5" fill="rgba(200,230,255,.35)" stroke="#9fb6c8"/><path d="M-12 0 H-1 M12 0 H${c ? 1 : 3}" stroke="#c9a43a" stroke-width="2.2" transform="${c ? '' : 'rotate(-10)'}"/>`;
+    }
+    case 'gas':
+      return `<circle r="12" fill="#c0c6cf" stroke="#7a828c"/><circle r="8" fill="#6b7480"/><path d="M-6 -2 H6 M-6 2 H6 M-2 -6 V6 M2 -6 V6" stroke="#9aa3ad" stroke-width="1"/>`;
+    case 'battery': return `<rect x="-17" y="-9" width="34" height="18" rx="3" fill="#1f2937" stroke="#0b1220"/><rect x="-17" y="-9" width="11" height="18" rx="3" fill="#ff7a33"/><text x="4" y="4" font-size="9" font-weight="900" fill="#fff" text-anchor="middle">9V</text>`;
+    case 'lemon': return `<ellipse rx="18" ry="12" fill="#f4dd3c" stroke="#b8a220"/><circle cx="-18" cy="0" r="2.5" fill="#b8a220"/><text x="-8" y="-4" font-size="7" font-weight="800" fill="#a33">Cu</text><text x="8" y="-4" font-size="7" font-weight="800" fill="#555" text-anchor="end">Zn</text>`;
+    case 'potato': return `<path d="M-18 2 C-18 -10 -4 -13 6 -11 C16 -9 19 -1 17 5 C14 12 -14 13 -18 2 Z" fill="#c69a5a" stroke="#8a6630"/><circle cx="-6" cy="-3" r="1.2" fill="#8a6630"/><circle cx="7" cy="4" r="1.2" fill="#8a6630"/><text x="-10" y="-4" font-size="7" font-weight="800" fill="#a33">Cu</text><text x="13" y="-1" font-size="7" font-weight="800" fill="#444" text-anchor="end">Zn</text>`;
     case 'ammeter': case 'voltmeter': {
       const u = type === 'ammeter' ? 'A' : 'V';
-      let txt = '-- ' + (u === 'A' ? 'mA' : 'V');
-      if (on && st.reading !== undefined) txt = u === 'A' ? st.reading.toFixed(Math.abs(st.reading) < 10 ? 2 : 1) + ' mA' : st.reading.toFixed(2) + ' V';
-      return `<rect x="-26" y="-15" width="52" height="30" rx="6" fill="${u === 'A' ? '#f2b53a' : '#3ab0f2'}" stroke="#222"/>` +
-        `<rect x="-21" y="-11" width="42" height="14" rx="2" fill="#bfe3b4"/><text x="0" y="0" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="middle" fill="#1d2b18">${txt}</text>` +
+      return `<rect x="-26" y="-15" width="52" height="30" rx="6" fill="${u === 'A' ? '#f2b53a' : '#3ab0f2'}" stroke="#222"/>` + lcd(fmtMeter(u, st, on)) +
         `<text x="0" y="12" font-size="8" font-weight="800" text-anchor="middle" fill="#222">${u}</text>`;
+    }
+    case 'multimeter': {
+      const u = (pr.mode || 'V') === 'A' ? 'A' : 'V';
+      return `<rect x="-26" y="-18" width="52" height="36" rx="6" fill="#f2d23a" stroke="#222"/>` + lcd(fmtMeter(u, st, on), 42, -14) +
+        `<circle cx="-10" cy="9" r="6" fill="#222"/><line x1="-10" y1="9" x2="${u === 'A' ? -14 : -6}" y2="5" stroke="#fff" stroke-width="1.6"/>` +
+        `<text x="8" y="12" font-size="8" font-weight="900" text-anchor="middle" fill="#222">${u === 'A' ? 'mA' : 'V'}</text>`;
     }
   }
   return '';
+}
+// multi-pin parts: drawn above their row of pins; local x=0 is the middle pin span, pins at y=0
+function rowBody(type, pr = {}, st = null, sim = false, n) {
+  const on = sim && st, w = (n - 1) * C.P;
+  const pinsX = Array.from({ length: n }, (_, k) => -w / 2 + k * C.P);
+  const lbl = (C.PINLBL[type] || []).map((s, k) => `<text x="${pinsX[k]}" y="13" class="pl2">${s}</text>`).join('');
+  const legs = pinsX.map(x => `<line x1="${x}" y1="-4" x2="${x}" y2="0" stroke="#b8bec8" stroke-width="2"/>`).join('');
+  let g = '';
+  switch (type) {
+    case 'pot': {
+      const a = -135 + 270 * (pr.pos ?? 0.5);
+      g = `<rect x="-26" y="-30" width="52" height="26" rx="4" fill="#2f63b8" stroke="#1d3f78"/>` +
+        `<circle cx="0" cy="-17" r="10" fill="#e9ecf1" stroke="#9aa3af"/><line x1="0" y1="-17" x2="${(Math.sin(a * Math.PI / 180) * 9).toFixed(2)}" y2="${(-17 - Math.cos(a * Math.PI / 180) * 9).toFixed(2)}" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>`;
+      break;
+    }
+    case 'rgb': {
+      const c = on && st.rgb ? st.rgb : [0, 0, 0], any = c.some(x => x > 0.03);
+      const col = `rgb(${Math.round(60 + 195 * c[0])},${Math.round(60 + 195 * c[1])},${Math.round(60 + 195 * c[2])})`;
+      if (pr.burned) g = `<path d="M-13 -4 L-13 -16 A13 13 0 0 1 13 -16 L13 -4 Z" fill="#444" stroke="#222"/><text x="0" y="-9" text-anchor="middle" font-size="10" fill="#bbb">✕</text>`;
+      else g = (any ? `<circle cy="-14" r="${16 + 12 * Math.max(...c)}" fill="${col}" opacity=".55" filter="url(#glow)"/>` : '') +
+        `<path d="M-13 -4 L-13 -16 A13 13 0 0 1 13 -16 L13 -4 Z" fill="${any ? col : 'rgba(235,240,255,.45)'}" stroke="${any ? '#fff' : '#9aa3af'}"/>` +
+        (any ? '' : `<circle cx="-5" cy="-14" r="2.4" fill="#ff5a5a"/><circle cx="0" cy="-18" r="2.4" fill="#4ade80"/><circle cx="5" cy="-14" r="2.4" fill="#5a9bff"/>`);
+      break;
+    }
+    case 'spdt': {
+      const b = pr.pos ? 1 : 0;
+      g = `<rect x="-26" y="-20" width="52" height="16" rx="3" fill="#2b4f7c" stroke="#1b3354"/><rect x="${b ? 2 : -24}" y="-18" width="22" height="12" rx="2" fill="#d8dde5"/>` +
+        `<text x="${b ? 13 : -13}" y="-9" font-size="8" font-weight="900" text-anchor="middle" fill="#2b4f7c">${b ? 'B' : 'A'}</text>`;
+      break;
+    }
+    case 'npn': {
+      const m = on ? st.mode : 'off';
+      g = `<path d="M-20 -4 L-20 -18 A20 12 0 0 1 20 -18 L20 -4 Z" fill="#1b1b1f" stroke="#444"/><text x="0" y="-9" font-size="8" font-weight="800" fill="#cfd3da" text-anchor="middle">NPN</text>` +
+        (m !== 'off' && m ? `<circle cx="14" cy="-20" r="3" fill="#4ade80"/>` : '');
+      break;
+    }
+    case 'relay': {
+      const k = on && st.closed;
+      g = `<rect x="-38" y="-30" width="76" height="26" rx="3" fill="#2f5fbf" stroke="#173a80"/><text x="-14" y="-13" font-size="8" font-weight="900" fill="#e0e9ff" text-anchor="middle">RELAY</text>` +
+        `<circle cx="20" cy="-17" r="5" fill="${k ? '#4ade80' : '#1b2a4a'}" stroke="#0b1530"/>`;
+      break;
+    }
+    case 'accel': case 'gyro': case 'irrx': {
+      const lab = type === 'accel' ? 'ACCEL' : type === 'gyro' ? 'GYRO' : 'IR';
+      const f = on ? st.f || 0 : 0;
+      g = `<rect x="-26" y="-34" width="52" height="30" rx="3" fill="${type === 'irrx' ? '#222' : '#1b6b4a'}" stroke="#0d3524"/>` +
+        (type === 'irrx' ? `<ellipse cx="0" cy="-22" rx="9" ry="8" fill="#3a2b44" stroke="#111"/>` : `<rect x="-8" y="-28" width="16" height="12" fill="#111"/>`) +
+        `<text x="0" y="-8" font-size="7" font-weight="900" fill="#e8f5ee" text-anchor="middle">${lab}</text>` +
+        `<circle cx="20" cy="-28" r="3" fill="${f > 0.05 ? '#ff5a5a' : '#3a1a1a'}"/>`;
+      break;
+    }
+  }
+  return legs + g + lbl;
 }
 
 function icon(type) {
   let inner;
   if (type === 'wire') inner = `<path d="M-26 8 Q0 -14 26 8" stroke="#e8463c" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-  else if (type === 'pot') inner = potBody({ pos: 0.5 }, 0.62);
-  else inner = `<line x1="-28" x2="28" stroke="#b8bec8" stroke-width="2"/><g transform="scale(${type === 'ammeter' || type === 'voltmeter' ? 0.75 : 1})">${body(type, { R: 330, color: 'red' })}</g>`;
+  else if (C.ROWPART[type]) { const n = C.PINS[type]; const s = n === 4 ? 0.62 : 0.8; inner = `<g transform="translate(0,${n === 4 ? 6 : 8}) scale(${s})">${rowBody(type, { pos: 0.5 }, null, false, n)}</g>`; }
+  else { const big = type === 'ammeter' || type === 'voltmeter' || type === 'multimeter'; inner = `<line x1="-28" x2="28" stroke="#b8bec8" stroke-width="2"/><g transform="scale(${big ? 0.72 : 1})">${body(type, { R: 330, color: 'red', C: 1000 })}</g>`; }
   return `<svg viewBox="-30 -24 60 40" class="ico">${inner}</svg>`;
-}
-function potBody(pr, s = 1) {
-  const a = -135 + 270 * (pr.pos ?? 0.5);
-  return `<g transform="scale(${s})"><rect x="-26" y="-20" width="52" height="26" rx="4" fill="#2f63b8" stroke="#1d3f78"/>` +
-    `<circle cx="0" cy="-7" r="10" fill="#e9ecf1" stroke="#9aa3af"/><line x1="0" y1="-7" x2="${(Math.sin(a * Math.PI / 180) * 9).toFixed(2)}" y2="${(-7 - Math.cos(a * Math.PI / 180) * 9).toFixed(2)}" stroke="#333" stroke-width="2.4" stroke-linecap="round"/>` +
-    `<line x1="-22" y1="6" x2="-22" y2="${s === 1 ? 0 : 14}" stroke="#b8bec8" stroke-width="2"/><line x1="0" y1="6" x2="0" y2="${s === 1 ? 0 : 14}" stroke="#b8bec8" stroke-width="2"/><line x1="22" y1="6" x2="22" y2="${s === 1 ? 0 : 14}" stroke="#b8bec8" stroke-width="2"/></g>`;
 }
 
 function buildBoard() {
@@ -1148,7 +1764,6 @@ function buildBoard() {
   for (const r of C.TERM) { const y = C.ROWY[r] + 4; h += `<text x="${x0 + 9}" y="${y}" class="lbl">${r}</text><text x="${x1 - 9}" y="${y}" class="lbl">${r}</text>`; }
   for (let c = 0; c < C.COLS; c++) { const x = C.X0 + c * C.P; if ((c + 1) % 5 === 0 || c === 0) { h += `<text x="${x}" y="92" class="lbl">${c + 1}</text><text x="${x}" y="362" class="lbl">${c + 1}</text>`; } }
   for (const hole of C.allHoles()) { const p = C.holePos(hole); h += `<rect x="${p.x - 3.5}" y="${p.y - 3.5}" width="7" height="7" rx="1.5" class="hole"/>`; }
-  // battery
   h += `<g id="battery"><rect x="14" y="30" width="56" height="96" rx="7" fill="#1f2937" stroke="#0b1220"/><rect x="14" y="30" width="56" height="34" rx="7" fill="#ff7a33"/>` +
     `<rect x="26" y="20" width="10" height="11" rx="2" fill="#c0c6cf"/><rect x="48" y="20" width="10" height="11" rx="2" fill="#c0c6cf"/>` +
     `<text x="31" y="17" font-size="12" font-weight="800" fill="#e8463c" text-anchor="middle">+</text><text x="53" y="17" font-size="13" font-weight="800" fill="#6aa0ff" text-anchor="middle">−</text>` +
@@ -1162,12 +1777,26 @@ function buildBoard() {
 function wirePath(a, b) {
   const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
   const bow = Math.min(26, len * 0.18);
-  const mx = (a.x + b.x) / 2 + (-dy / len) * bow * (dx >= 0 ? 1 : -1), my = (a.y + b.y) / 2 - Math.abs(dx / len) * bow - (Math.abs(dx) < 1 ? 0 : 0);
+  const mx = (a.x + b.x) / 2 + (-dy / len) * bow * (dx >= 0 ? 1 : -1), my = (a.y + b.y) / 2 - Math.abs(dx / len) * bow;
   return `M${a.x} ${a.y} Q${mx.toFixed(1)} ${my.toFixed(1)} ${b.x} ${b.y}`;
 }
 
-function renderParts() {
+/* a compact signature of what is visible, so the animation loop only redraws when needed */
+function visSig() {
+  if (!S.sim || !S.res) return 'off|' + JSON.stringify(board().parts) + S.sel;
+  const r = S.res;
+  return JSON.stringify(board().parts) + S.sel + board().parts.map(p => {
+    const x = r.parts[p.id] || {};
+    return [Math.round((x.bright || 0) * 20), x.lit ? 1 : 0, Math.round((x.speed || 0) * 4), x.sounding ? 1 : 0, x.open ? 1 : 0, x.closed ? 1 : 0, x.mode || '',
+      x.reading !== undefined ? x.reading.toFixed(2) : '', x.rgb ? x.rgb.map(v => Math.round(v * 10)).join('') : '', Math.round(Math.abs(x.V || 0) * 2), Math.round(Math.log10(Math.abs(x.I || 0) + 1e-6) * 2), Math.sign(x.I || 0), x.f ? Math.round(x.f * 10) : 0].join(',');
+  }).join(';') + JSON.stringify(S.env);
+}
+
+function renderParts(force = true) {
   const g = $('#parts'); if (!g) return;
+  const sig = visSig();
+  if (!force && sig === S.sig) return;
+  S.sig = sig;
   const sim = S.sim, res = S.res;
   let h = '';
   const parts = [...board().parts].sort((a, b) => (b.type === 'wire') - (a.type === 'wire'));
@@ -1175,7 +1804,7 @@ function renderParts() {
     const st = res && res.parts[p.id];
     const P = p.pins.map(C.holePos);
     const sel = S.sel === p.id ? ' sel' : '';
-    const clickable = sim && (p.type === 'button' || p.type === 'switch') ? ' act' : '';
+    const clickable = sim && (PRESSABLE[p.type] || TOGGLEABLE[p.type]) ? ' act' : '';
     h += `<g class="part${sel}${clickable}" data-id="${p.id}"><title>${esc(pn(p.type))}${p.type === 'resistor' ? ' ' + fmtR(p.props.R) + 'Ω' : ''}</title>`;
     if (p.type === 'wire') {
       const d = wirePath(P[0], P[1]), col = WIRE_COLORS[p.props.color || 'red'];
@@ -1183,24 +1812,26 @@ function renderParts() {
       if (sel) h += `<path d="${d}" stroke="#ffd166" stroke-width="10" fill="none" stroke-linecap="round" opacity=".6"/>`;
       h += `<path d="${d}" stroke="${col}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
       h += `<path d="${d}" stroke="rgba(255,255,255,.35)" stroke-width="1.5" fill="none" stroke-linecap="round" transform="translate(-1,-1)"/>`;
-      if (sim && st && Math.abs(st.I) > 0.0005) {
+      if (sim && st && Math.abs(st.I) > 0.0003) {
         const dur = Math.max(0.25, Math.min(3, 0.02 / Math.abs(st.I)));
         h += `<path d="${d}" class="flow" style="animation-duration:${dur.toFixed(2)}s;animation-direction:${st.I > 0 ? 'normal' : 'reverse'}"/>`;
       }
-    } else if (p.type === 'pot') {
-      const a = P[0], c = P[2];
-      h += `<g transform="translate(${(a.x + c.x) / 2},${a.y - 6})">${sel ? '<rect x="-31" y="-26" width="62" height="38" rx="6" fill="none" stroke="#ffd166" stroke-width="3"/>' : ''}${potBody(p.props)}</g>`;
+    } else if (C.ROWPART[p.type]) {
+      const a = P[0], c = P[P.length - 1], n = P.length;
+      const hw = (n - 1) * C.P / 2 + 16;
+      h += `<rect x="${a.x - 14}" y="${a.y - 40}" width="${c.x - a.x + 28}" height="54" fill="transparent"/>`;
+      h += `<g transform="translate(${(a.x + c.x) / 2},${a.y})">${sel ? `<rect x="${-hw}" y="-42" width="${hw * 2}" height="58" rx="6" fill="none" stroke="#ffd166" stroke-width="3" stroke-dasharray="4 3"/>` : ''}${rowBody(p.type, p.props, st, sim, n)}</g>`;
     } else {
       const a = P[0], b = P[1];
       const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-      let ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+      const ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
       h += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="hit"/>`;
       h += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#b8bec8" stroke-width="2.4"/>`;
-      const meter = p.type === 'ammeter' || p.type === 'voltmeter';
-      const upright = ['ammeter', 'voltmeter', 'button', 'motor', 'bulb', 'led', 'buzzer', 'switch', 'ldr'].includes(p.type);
+      const meter = p.type === 'ammeter' || p.type === 'voltmeter' || p.type === 'multimeter';
+      const upright = meter || ['button', 'touch', 'motor', 'bulb', 'led', 'buzzer', 'switch', 'ldr', 'ntc', 'tilt', 'gas', 'valve', 'capacitor'].includes(p.type);
       const rot = upright ? '' : `rotate(${ang})`;
-      h += `<g transform="translate(${mx},${my}) ${rot}">${sel ? `<circle r="${meter ? 30 : 20}" fill="none" stroke="#ffd166" stroke-width="3" stroke-dasharray="4 3"/>` : ''}${body(p.type, p.props, st, sim)}</g>`;
-      if (['led', 'buzzer', 'ammeter', 'voltmeter'].includes(p.type)) h += `<text x="${a.x - 7}" y="${a.y - 6}" class="plus">+</text>`;
+      h += `<g transform="translate(${mx},${my}) ${rot}">${sel ? `<circle r="${meter ? 30 : 22}" fill="none" stroke="#ffd166" stroke-width="3" stroke-dasharray="4 3"/>` : ''}${body(p.type, p.props, st, sim)}</g>`;
+      if (['led', 'buzzer', 'ammeter', 'voltmeter', 'multimeter', 'battery', 'lemon', 'potato', 'capacitor'].includes(p.type)) h += `<text x="${a.x - 7}" y="${a.y - 6}" class="plus">+</text>`;
       if (p.type === 'resistor') h += `<text x="${mx}" y="${my - 11}" class="rv">${fmtR(p.props.R)}Ω</text>`;
     }
     for (const q of P) h += `<circle cx="${q.x}" cy="${q.y}" r="2.6" fill="#5c6370"/>`;
@@ -1210,39 +1841,91 @@ function renderParts() {
 }
 
 /* ---------------- simulation ---------------- */
-function simulate() {
+let loopT = null, lastTick = 0;
+const needsLoop = () => S.sim && board().parts.some(p => p.type === 'capacitor' || p.type === 'valve');
+function ensureLoop() {
+  if (needsLoop() && !loopT) { lastTick = performance.now(); loopT = setInterval(tick, 50); }
+  if (!needsLoop() && loopT) { clearInterval(loopT); loopT = null; }
+}
+function tick() {
+  const now = performance.now(), dt = Math.min(0.1, (now - lastTick) / 1000); lastTick = now;
+  // gas released by an open valve slowly fills the room, then airs out
+  const valveOpen = S.res && board().parts.some(p => p.type === 'valve' && S.res.parts[p.id] && S.res.parts[p.id].open);
+  S.leak = Math.max(0, Math.min(1, S.leak + (valveOpen ? 0.25 : -0.12) * dt));
+  simulate(dt);
+  renderParts(false); renderEnv(true);
+  if (S.sel) renderPropsMeas();
+}
+function simulate(dt) {
   if (!S.sim) { S.res = null; buzz(0); return; }
   const c = board();
-  let r = C.solve(c, { light: S.light });
+  const caps = c.parts.filter(p => p.type === 'capacitor');
+  const base = envOpts();
+  const step = dt || (caps.length ? 0.05 : 0);
+  const run = () => C.solve(c, step ? Object.assign({}, base, { dt: step, capV: S.capV }) : base);
+  let r = run();
   let burnt = false;
-  for (const p of c.parts) if (p.type === 'led' && r.parts[p.id] && r.parts[p.id].burn && !p.props.burned) { p.props.burned = true; burnt = true; }
-  if (burnt) { r = C.solve(c, { light: S.light }); beep(180, 0.35, 0.08, 'sawtooth'); toast(t('burned'), 'bad'); }
+  for (const p of c.parts) if ((p.type === 'led' || p.type === 'rgb') && r.parts[p.id] && r.parts[p.id].burn && !p.props.burned) { p.props.burned = true; burnt = true; }
+  if (burnt) { r = run(); beep(180, 0.35, 0.08, 'sawtooth'); toast(t('burned'), 'bad'); persist(); }
+  if (step) for (const p of caps) S.capV[p.id] = r.parts[p.id].V;
   S.res = r;
   let lvl = 0;
   for (const p of c.parts) if (p.type === 'buzzer' && r.parts[p.id].sounding) lvl = Math.max(lvl, r.parts[p.id].I / 0.03);
   buzz(lvl);
   if (r.short) status(t('short'), 'bad');
   else if (c.parts.some(p => p.props.burned)) status(t('burned'), 'bad');
-  else if (!r.flowing && c.parts.length) status(t('noPower'), 'warn');
+  else if (!r.flowing && c.parts.length && !caps.length) status(t('noPower'), 'warn');
   else status(t('simOn'), 'ok');
-  // lesson check
-  if (S.mode === 'learn') {
-    const les = C.LESSONS[S.lesson];
-    if (!S.celebrated && les.check(c, (cc, o) => C.solve(cc, Object.assign({ light: S.light }, o)), r)) {
-      S.celebrated = true;
-      if (!S.done.includes(les.id)) S.done.push(les.id);
-      persist();
-      setTimeout(celebrate, 450);
-    }
+  if (S.mode === 'learn' && !dt) checkLesson(r);
+  else if (S.mode === 'learn' && dt) { S.checkAcc = (S.checkAcc || 0) + dt; if (S.checkAcc > 0.5) { S.checkAcc = 0; checkLesson(r); } }
+  ensureLoop();
+}
+function checkLesson(r) {
+  const les = C.LESSONS[S.lesson];
+  if (S.celebrated) return;
+  const s = (cc, o) => C.solve(cc, Object.assign(envOpts(), o));
+  let pass = false;
+  try { pass = les.check(board(), s, r); } catch (e) { pass = false; }
+  if (pass) {
+    S.celebrated = true;
+    if (!S.done.includes(les.id)) S.done.push(les.id);
+    persist();
+    setTimeout(celebrate, 450);
   }
 }
+
+/* ---------------- environment controls ---------------- */
+const ENV_FOR = { light: ['ldr'], temp: ['ntc'], tilt: ['tilt', 'accel'], rot: ['gyro'], gas: ['gas', 'valve'], magnet: ['reed'], ir: ['irrx'] };
+function renderEnv(valuesOnly = false) {
+  const box = $('#envbar');
+  const show = k => ENV_FOR[k].some(hasType);
+  const keys = Object.keys(ENV_FOR).filter(show);
+  if (valuesOnly && box.dataset.keys === keys.join(',')) {
+    const gv = $('#envGasV'); if (gv) gv.textContent = Math.round(Math.max(S.env.gas, S.leak) * 100) + '%';
+    const lk = $('#envLeak'); if (lk) lk.hidden = S.leak < 0.02;
+    return;
+  }
+  box.dataset.keys = keys.join(',');
+  let h = '';
+  for (const k of keys) {
+    if (k === 'light') h += `<label class="env">☀ ${esc(t('light'))}<input type="range" data-env="light" min="0" max="100" value="${Math.round(S.light * 100)}"><b>${Math.round(S.light * 100)}%</b></label>`;
+    if (k === 'temp') h += `<label class="env">🌡 ${esc(t('temp'))}<input type="range" data-env="temp" min="-10" max="60" value="${S.env.temp}"><b>${S.env.temp} °C</b></label>`;
+    if (k === 'tilt') h += `<label class="env">📐 ${esc(t('tiltLbl'))}<input type="range" data-env="tilt" min="0" max="90" value="${S.env.tilt}"><b>${S.env.tilt}°</b></label>`;
+    if (k === 'rot') h += `<label class="env">🔄 ${esc(t('rotLbl'))}<input type="range" data-env="rot" min="0" max="100" value="${Math.round(S.env.rot * 100)}"><b>${Math.round(S.env.rot * 100)}%</b></label>`;
+    if (k === 'gas') h += `<label class="env">💨 ${esc(t('gasLbl'))}<input type="range" data-env="gas" min="0" max="100" value="${Math.round(S.env.gas * 100)}"><b id="envGasV">${Math.round(Math.max(S.env.gas, S.leak) * 100)}%</b><span id="envLeak" class="leak" ${S.leak < 0.02 ? 'hidden' : ''}>⚠ ${esc(t('leak'))}</span></label>`;
+    if (k === 'magnet') h += `<button class="btn small env${S.env.magnet ? ' on' : ''}" data-envbtn="magnet">🧲 ${esc(S.env.magnet ? t('magnetNear') : t('magnetFar'))}</button>`;
+    if (k === 'ir') h += `<span class="env irbox">📡 ${esc(t('irRemote'))}<button class="btn small" data-ir="hold">▶ ${esc(t('irHold'))}</button><button class="btn small${S.env.irFixed ? ' on' : ''}" data-ir="fixed">● ${esc(t('irFixed'))}</button><button class="btn small" data-ir="stop">■ ${esc(t('irStop'))}</button></span>`;
+  }
+  box.innerHTML = h; box.hidden = !keys.length;
+}
+function envChanged() { persist(); if (S.sim) { simulate(); renderParts(); renderPropsMeas(); } }
 
 /* ---------------- render UI ---------------- */
 function renderPalette() {
   const un = unlockedTypes();
   let h = '';
   for (const [cat, types] of CATS) {
-    h += `<div class="cat">${esc(L().cats[cat])}</div><div class="grid">`;
+    h += `<div class="cat">${esc(L().cats[cat] ?? I18N.en.cats[cat])}</div><div class="grid">`;
     for (const ty of types) {
       const lk = !un.has(ty);
       h += `<button class="pal${S.tool === ty ? ' on' : ''}${lk ? ' locked' : ''}" data-type="${ty}" title="${esc(pn(ty))}">` +
@@ -1253,21 +1936,37 @@ function renderPalette() {
   $('#palette').innerHTML = h;
 }
 
+function measHtml(p) {
+  const st = S.res && S.res.parts[p.id];
+  if (!st || !S.sim) return '';
+  const mA = x => (Math.abs(x || 0) * 1000).toFixed(1) + ' mA';
+  let rows = [];
+  if (p.type === 'pot') rows.push([t('current'), mA(Math.max(Math.abs(st.Iaw || 0), Math.abs(st.Iwb || 0)))]);
+  else if (p.type === 'npn') { rows.push([t('state'), t('q_' + (st.mode || 'off'))], ['I(B)', mA(st.Ib)], ['I(C)', mA(st.Ic)]); }
+  else if (p.type === 'relay') { rows.push([t('state'), st.closed ? t('relayOn') : t('relayOff')], [t('current') + ' ~', mA(st.Icoil)]); }
+  else if (p.type === 'rgb') { const ch = st.ch || [0, 0, 0]; rows.push(['R', mA(ch[0])], ['G', mA(ch[1])], ['B', mA(ch[2])]); }
+  else if (['accel', 'gyro', 'irrx'].includes(p.type)) rows.push([t('outV'), (st.out || 0).toFixed(2) + ' V']);
+  else { rows.push([t('current'), mA(st.I)]); rows.push([t('voltage'), Math.abs(st.V || 0).toFixed(2) + ' V']); }
+  if (p.type === 'valve') rows.unshift([t('state'), st.open ? t('valveOpen') : t('valveClosed')]);
+  return `<div class="meas" id="meas">${rows.map(([a, b]) => `<span>${esc(a)}: <b>${esc(b)}</b></span>`).join('')}</div>`;
+}
+function renderPropsMeas() { const p = board().parts.find(x => x.id === S.sel); const m = $('#meas'); if (p && m) m.outerHTML = measHtml(p) || '<div id="meas"></div>'; }
 function renderProps() {
   const el = $('#props');
   const p = board().parts.find(x => x.id === S.sel);
   if (!p) { el.innerHTML = `<h3>${esc(t('props'))}</h3><p class="muted">${esc(t('noSelection'))}</p>`; return; }
-  const st = S.res && S.res.parts[p.id];
-  let h = `<h3>${icon(p.type)} ${esc(pn(p.type))}</h3><p class="muted small">${esc(L().info[p.type])}</p>`;
+  let h = `<h3>${icon(p.type)} ${esc(pn(p.type))}</h3><p class="muted small">${esc(pinfo(p.type))}</p>`;
   if (p.type === 'resistor') h += `<label>${esc(t('value'))}<select data-prop="R">${R_VALUES.map(v => `<option value="${v}"${v === p.props.R ? ' selected' : ''}>${fmtR(v)} Ω</option>`).join('')}</select></label>`;
-  if (p.type === 'led') h += `<label>${esc(t('color'))}<div class="swatches">${Object.keys(LED_COLORS).map(k => `<button data-color="${k}" title="${esc(L().colors[k])}" class="sw${p.props.color === k ? ' on' : ''}" style="background:${LED_COLORS[k]}"></button>`).join('')}</div></label>` + (p.props.burned ? `<p class="bad small">💥 ${esc(t('burnedLabel'))}</p>` : '');
+  if (p.type === 'capacitor') h += `<label>${esc(t('capacitance'))}<select data-prop="C">${C_VALUES.map(v => `<option value="${v}"${v === (p.props.C || 1000) ? ' selected' : ''}>${v} µF</option>`).join('')}</select></label>`;
+  if (p.type === 'led') h += `<label>${esc(t('color'))}<div class="swatches">${Object.keys(LED_COLORS).map(k => `<button data-color="${k}" title="${esc(L().colors[k])}" class="sw${p.props.color === k ? ' on' : ''}" style="background:${LED_COLORS[k]}"></button>`).join('')}</div></label>`;
+  if ((p.type === 'led' || p.type === 'rgb') && p.props.burned) h += `<p class="bad small">💥 ${esc(t('burnedLabel'))}</p>`;
   if (p.type === 'wire') h += `<label>${esc(t('color'))}<div class="swatches">${Object.keys(WIRE_COLORS).map(k => `<button data-color="${k}" title="${esc(L().colors[k])}" class="sw${(p.props.color || 'red') === k ? ' on' : ''}" style="background:${WIRE_COLORS[k]}"></button>`).join('')}</div></label>`;
   if (p.type === 'pot') h += `<label>${esc(t('position'))} <b id="potv">${Math.round((p.props.pos ?? 0.5) * 100)}%</b><input type="range" min="0" max="100" value="${Math.round((p.props.pos ?? 0.5) * 100)}" data-prop="pos"></label>`;
   if (p.type === 'switch') h += `<label>${esc(t('state'))}<button class="btn small tog" data-toggle="on">${p.props.on ? '🟢 ' + esc(t('on')) : '⚪ ' + esc(t('off'))}</button></label>`;
-  if (st && S.sim) {
-    const I = p.type === 'pot' ? Math.max(Math.abs(st.Iaw || 0), Math.abs(st.Iwb || 0)) : Math.abs(st.I || 0);
-    h += `<div class="meas"><span>${esc(t('current'))}: <b>${(I * 1000).toFixed(1)} mA</b></span>` + (p.type !== 'pot' ? `<span>${esc(t('voltage'))}: <b>${Math.abs(st.V || 0).toFixed(2)} V</b></span>` : '') + `</div>`;
-  }
+  if (p.type === 'spdt') h += `<label>${esc(t('state'))}<button class="btn small tog" data-toggle="pos">↔ ${esc(t('spdtPos'))} ${p.props.pos ? 'B' : 'A'}</button></label>`;
+  if (p.type === 'multimeter') h += `<label>${esc(t('meterMode'))}<div class="row"><button class="btn small${(p.props.mode || 'V') === 'V' ? ' on' : ''}" data-mode="V">V ${esc(t('voltage'))}</button><button class="btn small${p.props.mode === 'A' ? ' on' : ''}" data-mode="A">mA ${esc(t('current'))}</button></div></label>`;
+  if (C.PINLBL[p.type] && p.type !== 'pot') h += `<p class="small muted">${esc(t('pinsLbl'))}: ${C.PINLBL[p.type].map((x, k) => `<b>${esc(x)}</b> ${esc((L().pinNames && L().pinNames[p.type] || I18N.en.pinNames[p.type] || [])[k] || '')}`).join(' · ')}</p>`;
+  h += measHtml(p) || '<div id="meas"></div>';
   h += `<button class="btn danger small" id="delSel">🗑 ${esc(t('del'))}</button>`;
   el.innerHTML = h;
 }
@@ -1279,7 +1978,7 @@ function renderLesson() {
     ban.innerHTML = `<span class="bt">🎮 ${esc(t('free'))}</span><span class="bs">${esc(t('subtitle'))}</span>`;
     return;
   }
-  const i = S.lesson, les = L().lessons[i], done = S.done.includes(C.LESSONS[i].id);
+  const i = S.lesson, les = lessonText(i), done = S.done.includes(C.LESSONS[i].id);
   ban.innerHTML = `<span class="bt">🎓 ${esc(t('level'))} ${i + 1}: ${esc(les.t)} ${done ? '<span class="donechip">✓ ' + esc(t('done')) + '</span>' : ''}</span>` +
     `<button class="btn small ghost" id="openLessons">📚 ${esc(t('lessons'))} (${S.done.length}/${C.LESSONS.length})</button>`;
   let h = `<h3 class="lt">🎓 ${esc(les.t)}</h3><p>${esc(les.d)}</p><ol class="steps">`;
@@ -1300,10 +1999,7 @@ function renderToolbar() {
   $('#undoBtn').disabled = !hist[S.mode].u.length;
   $('#redoBtn').disabled = !hist[S.mode].r.length;
   $('#soundBtn').innerHTML = (S.sound ? '🔊 ' : '🔇 ') + esc(t('sound'));
-  const hasLdr = board().parts.some(p => p.type === 'ldr');
-  $('#lightBox').hidden = !hasLdr;
-  $('#lightVal').textContent = Math.round(S.light * 100) + '%';
-  $('#lightRange').value = Math.round(S.light * 100);
+  renderEnv();
 }
 
 function renderTexts() {
@@ -1329,15 +2025,17 @@ function svgPoint(ev) {
 }
 function hint() {
   if (S.tool === 'select') return;
-  if (S.tool === 'pot') status(t('pickPot'));
+  if (C.ROWPART[S.tool]) status(t('pickRow', { part: '<b>' + esc(pn(S.tool)) + '</b>', n: C.PINS[S.tool] }));
   else status(S.pending ? t('pickSecond') : t('pickFirst', { part: '<b>' + esc(pn(S.tool)) + '</b>' }));
 }
 function addPart(type, pins, props = {}) {
   snapshot();
   const p = { id: 'p' + (S.nextId++), type, pins, props };
   if (type === 'resistor') p.props.R = props.R || 330;
+  if (type === 'capacitor') p.props.C = props.C || 1000;
   if (type === 'led') p.props.color = props.color || 'red';
   if (type === 'pot') p.props.pos = props.pos ?? 0.5;
+  if (type === 'multimeter') p.props.mode = props.mode || 'V';
   if (type === 'wire' && !props.color) {
     const nets = pins.map(C.holeNet);
     p.props.color = nets.includes('tn') || nets.includes('bn') ? 'black' : nets.includes('tp') || nets.includes('bp') ? 'red' : ['blue', 'green', 'yellow', 'orange'][S.nextId % 4];
@@ -1346,14 +2044,18 @@ function addPart(type, pins, props = {}) {
   beep(660, 0.05, 0.04);
   return p;
 }
+function rowPins(h, n) {
+  const [r, c] = h.split(':');
+  if (!C.TERM.includes(r) || +c + n - 1 >= C.COLS) return null;
+  return Array.from({ length: n }, (_, k) => r + ':' + (+c + k));
+}
 function clickHole(h) {
   const occ = occupied();
-  if (S.tool === 'pot') {
-    const [r, c] = h.split(':');
-    if (!C.TERM.includes(r) || +c + 2 >= C.COLS) { toast(t('potBad'), 'warn'); return; }
-    const pins = [0, 1, 2].map(k => r + ':' + (+c + k));
+  if (C.ROWPART[S.tool]) {
+    const pins = rowPins(h, C.PINS[S.tool]);
+    if (!pins) { toast(t('rowBad'), 'warn'); return; }
     if (pins.some(x => occ[x])) { toast(t('occupied'), 'warn'); return; }
-    addPart('pot', pins); changed(); return;
+    addPart(S.tool, pins); changed({ palette: true }); return;
   }
   if (occ[h]) { toast(t('occupied'), 'warn'); return; }
   if (!S.pending) { S.pending = h; beep(520, 0.04, 0.03); drawOverlay(); hint(); return; }
@@ -1366,9 +2068,8 @@ function drawOverlay() {
   let h = '';
   if (S.hover && S.tool !== 'select') {
     const p = C.holePos(S.hover);
-    if (S.tool === 'pot') { const [r, c] = S.hover.split(':'); for (let k = 0; k < 3; k++) { const q = C.holePos(r + ':' + Math.min(C.COLS - 1, +c + k)); h += `<circle cx="${q.x}" cy="${q.y}" r="7" class="hov"/>`; } }
+    if (C.ROWPART[S.tool]) { const pins = rowPins(S.hover, C.PINS[S.tool]) || [S.hover]; for (const x of pins) { const q = C.holePos(x); h += `<circle cx="${q.x}" cy="${q.y}" r="7" class="hov${pins.length > 1 ? '' : ' bad'}"/>`; } }
     else h += `<circle cx="${p.x}" cy="${p.y}" r="7" class="hov"/>`;
-    // highlight connected holes of this net
     const net = C.holeNet(S.hover);
     if (net.length > 2) for (const x of C.allHoles()) if (C.holeNet(x) === net && x !== S.hover) { const q = C.holePos(x); h += `<circle cx="${q.x}" cy="${q.y}" r="5" class="hov2"/>`; }
   }
@@ -1388,7 +2089,7 @@ function setTool(tool) {
 }
 function deleteSel() {
   const b = board(); const i = b.parts.findIndex(p => p.id === S.sel); if (i < 0) return;
-  snapshot(); b.parts.splice(i, 1); S.sel = null; beep(300, 0.06, 0.04); changed();
+  snapshot(); delete S.capV[b.parts[i].id]; b.parts.splice(i, 1); S.sel = null; beep(300, 0.06, 0.04); changed({ palette: true });
 }
 
 /* ---------------- modals ---------------- */
@@ -1398,7 +2099,7 @@ function modal(html, cls = '') {
 const closeModal = () => { $('#modal').hidden = true; $('#modal').innerHTML = ''; };
 
 function celebrate() {
-  const i = S.lesson, les = L().lessons[i], next = i + 1 < C.LESSONS.length ? C.LESSONS[i + 1] : null;
+  const i = S.lesson, les = lessonText(i), next = i + 1 < C.LESSONS.length ? C.LESSONS[i + 1] : null;
   [523, 659, 784, 1047].forEach((f, k) => beep(f, 0.18, 0.06, 'triangle', k * 0.12));
   confetti();
   let h = `<div class="cel">🎉</div><h2>${esc(t('lessonDone'))}</h2><p class="big">${esc(t('level'))} ${i + 1}: ${esc(les.t)}</p>`;
@@ -1414,7 +2115,6 @@ function confetti() {
     const s = document.createElement('i');
     s.style.left = Math.random() * 100 + 'vw'; s.style.background = cols[k % cols.length];
     s.style.animationDelay = Math.random() * 0.6 + 's'; s.style.animationDuration = 1.6 + Math.random() * 1.4 + 's';
-    s.style.transform = `rotate(${Math.random() * 360}deg)`;
     box.appendChild(s);
   }
   setTimeout(() => (box.innerHTML = ''), 3600);
@@ -1424,7 +2124,7 @@ function lessonsModal() {
   let h = `<h2>📚 ${esc(t('lessons'))}</h2><div class="llist">`;
   C.LESSONS.forEach((les, i) => {
     const done = S.done.includes(les.id), open = i <= mx || done;
-    h += `<button class="lrow${i === S.lesson ? ' cur' : ''}" ${open ? `data-lesson="${i}"` : 'disabled'}><span class="ln">${i + 1}</span><span class="lname">${esc(L().lessons[i].t)}</span><span class="ls">${done ? '✅' : open ? '▶' : '🔒'}</span></button>`;
+    h += `<button class="lrow${i === S.lesson ? ' cur' : ''}" ${open ? `data-lesson="${i}"` : 'disabled'}><span class="ln">${i + 1}</span><span class="lname">${esc(lessonText(i).t)}</span><span class="ls">${done ? '✅' : open ? '▶' : '🔒'}</span></button>`;
   });
   modal(h + '</div>');
 }
@@ -1444,7 +2144,7 @@ function showSolution() {
   const h = hist[S.mode].u.slice();
   les.solution.forEach(p => addPart(p.type, [...p.pins], { ...p.props }));
   hist[S.mode].u = h;
-  S.sel = null; changed(); toast(t('solutionLoaded'), 'ok');
+  S.sel = null; S.capV = {}; changed({ palette: true }); toast(t('solutionLoaded'), 'ok');
 }
 function savedList() { return load('rk_saved', []); }
 function circuitsModal() {
@@ -1463,18 +2163,18 @@ function loadParts(parts) {
   board().parts = [];
   for (const p of parts) {
     if (!C.PINS[p.type] || !Array.isArray(p.pins) || p.pins.length !== C.PINS[p.type]) continue;
-    if (!p.pins.every(x => typeof x === 'string' && C.holePos(x).y !== undefined && !isNaN(C.holePos(x).x))) continue;
+    if (!p.pins.every(x => typeof x === 'string' && C.ROWY[x.split(':')[0]] !== undefined && +x.split(':')[1] >= 0 && +x.split(':')[1] < C.COLS)) continue;
     addPart(p.type, [...p.pins], { ...(p.props || {}) });
   }
   hist[S.mode].u = h;
-  S.sel = null; changed({ palette: true });
+  S.sel = null; S.capV = {}; changed({ palette: true });
 }
 
 function setSim(on) {
   S.sim = on;
-  if (on) { audio(); for (const p of board().parts) if (p.type === 'button') p.props.pressed = false; }
+  if (on) { audio(); S.capV = {}; S.leak = 0; for (const p of board().parts) if (PRESSABLE[p.type]) p.props.pressed = false; }
   simulate();
-  if (!on) { status(''); buzz(0); }
+  if (!on) { status(''); buzz(0); S.irHold = false; ensureLoop(); }
   renderParts(); renderProps(); renderToolbar();
 }
 
@@ -1491,31 +2191,56 @@ function bind() {
   $('#clearBtn').onclick = () => modal(`<h2>🗑 ${esc(t('clear'))}</h2><p>${esc(t('confirmClear'))}</p><div class="row center"><button class="btn danger" id="doClear">${esc(t('yes'))}</button><button class="btn ghost" data-close>${esc(t('no'))}</button></div>`, 'center');
   $('#modeFree').onclick = () => { if (S.mode === 'free') return; S.mode = 'free'; S.sel = null; S.pending = null; setSim(false); S.tool = 'select'; renderAll(); persist(); };
   $('#modeLearn').onclick = () => { if (S.mode === 'learn') return; S.mode = 'learn'; S.sel = null; S.pending = null; setSim(false); S.tool = 'select'; S.celebrated = S.done.includes(C.LESSONS[S.lesson].id); renderAll(); persist(); };
-  $('#lightRange').oninput = e => { S.light = e.target.value / 100; $('#lightVal').textContent = e.target.value + '%'; if (S.sim) { simulate(); renderParts(); renderProps(); } persist(); };
+
+  const env = $('#envbar');
+  env.addEventListener('input', e => {
+    const k = e.target.dataset.env; if (!k) return;
+    const v = +e.target.value, b = e.target.nextElementSibling;
+    if (k === 'light') { S.light = v / 100; b.textContent = v + '%'; }
+    if (k === 'temp') { S.env.temp = v; b.textContent = v + ' °C'; }
+    if (k === 'tilt') { S.env.tilt = v; b.textContent = v + '°'; }
+    if (k === 'rot') { S.env.rot = v / 100; b.textContent = v + '%'; }
+    if (k === 'gas') { S.env.gas = v / 100; b.textContent = Math.round(Math.max(S.env.gas, S.leak) * 100) + '%'; }
+    envChanged();
+  });
+  env.addEventListener('click', e => {
+    const b = e.target.closest('[data-envbtn]');
+    if (b) { S.env.magnet = !S.env.magnet; beep(S.env.magnet ? 700 : 500, 0.05, 0.03); renderEnv(); envChanged(); return; }
+    const ir = e.target.closest('[data-ir]');
+    if (ir && ir.dataset.ir === 'fixed') { S.env.irFixed = !S.env.irFixed; renderEnv(); envChanged(); }
+    if (ir && ir.dataset.ir === 'stop') { S.env.irFixed = false; S.irHold = false; renderEnv(); envChanged(); }
+  });
+  env.addEventListener('pointerdown', e => { const ir = e.target.closest('[data-ir="hold"]'); if (ir) { S.irHold = true; ir.classList.add('on'); beep(1200, 0.03, 0.02); envChanged(); } });
+  const irUp = () => { if (S.irHold) { S.irHold = false; const b = env.querySelector('[data-ir="hold"]'); if (b) b.classList.remove('on'); envChanged(); } };
+  window.addEventListener('pointerup', irUp); window.addEventListener('pointercancel', irUp);
 
   $('#palette').addEventListener('click', e => {
     const inf = e.target.closest('[data-info]');
-    if (inf) { e.stopPropagation(); const ty = inf.dataset.info; modal(`<h2>${icon(ty)} ${esc(pn(ty))}</h2><p>${esc(L().info[ty])}</p>`); return; }
+    if (inf) { e.stopPropagation(); const ty = inf.dataset.info; modal(`<h2>${icon(ty)} ${esc(pn(ty))}</h2><p>${esc(pinfo(ty))}</p>`); return; }
     const b = e.target.closest('[data-type]'); if (!b) return;
     if (b.classList.contains('locked')) { toast(t('locked'), 'warn'); return; }
     setTool(S.tool === b.dataset.type ? 'select' : b.dataset.type);
   });
   $('#props').addEventListener('change', e => {
     const p = board().parts.find(x => x.id === S.sel); if (!p) return;
-    if (e.target.dataset.prop === 'R') { snapshot(); p.props.R = +e.target.value; changed(); }
-    if (e.target.dataset.prop === 'pos') { snapshot(); p.props.pos = e.target.value / 100; changed(); }
+    const k = e.target.dataset.prop;
+    if (k === 'R' || k === 'C') { snapshot(); p.props[k] = +e.target.value; changed(); }
+    if (k === 'pos') { snapshot(); p.props.pos = e.target.value / 100; changed(); }
   });
   $('#props').addEventListener('input', e => {
     const p = board().parts.find(x => x.id === S.sel); if (!p || e.target.dataset.prop !== 'pos') return;
     p.props.pos = e.target.value / 100; $('#potv').textContent = e.target.value + '%';
-    if (S.sim) simulate(); renderParts();
+    if (S.sim) { simulate(); renderPropsMeas(); } renderParts();
   });
   $('#props').addEventListener('click', e => {
     const p = board().parts.find(x => x.id === S.sel); if (!p) return;
     if (e.target.closest('#delSel')) return deleteSel();
     const c = e.target.closest('[data-color]');
     if (c) { snapshot(); p.props.color = c.dataset.color; if (p.type === 'led') p.props.burned = false; changed(); }
-    if (e.target.closest('[data-toggle]')) { snapshot(); p.props.on = !p.props.on; beep(p.props.on ? 900 : 600, 0.04, 0.04); changed(); }
+    const tg = e.target.closest('[data-toggle]');
+    if (tg) { snapshot(); const k = tg.dataset.toggle; p.props[k] = k === 'pos' ? (p.props.pos ? 0 : 1) : !p.props[k]; beep(900, 0.04, 0.04); changed(); }
+    const md = e.target.closest('[data-mode]');
+    if (md) { snapshot(); p.props.mode = md.dataset.mode; changed(); }
   });
   $('#lesson').addEventListener('click', e => {
     if (e.target.closest('#solution')) showSolution();
@@ -1526,11 +2251,11 @@ function bind() {
     if (e.target === $('#modal') || e.target.closest('[data-close]')) return closeModal();
     const l = e.target.closest('[data-lesson]'); if (l) return startLesson(+l.dataset.lesson);
     if (e.target.closest('#goNext')) return startLesson(S.lesson + 1);
-    if (e.target.closest('#doClear')) { snapshot(); board().parts = []; S.sel = null; closeModal(); changed(); return; }
+    if (e.target.closest('#doClear')) { snapshot(); board().parts = []; S.sel = null; S.capV = {}; closeModal(); changed({ palette: true }); return; }
     if (e.target.closest('#doSave')) { const list = savedList(); list.unshift({ name: $('#cname').value.trim() || t('defaultName'), date: Date.now(), parts: board().parts.map(({ type, pins, props }) => ({ type, pins, props })) }); store('rk_saved', list.slice(0, 40)); toast(t('saved'), 'ok'); circuitsModal(); return; }
     const lc = e.target.closest('[data-loadc]'); if (lc) { loadParts(savedList()[+lc.dataset.loadc].parts); closeModal(); toast(t('loaded'), 'ok'); return; }
     const dc = e.target.closest('[data-delc]'); if (dc) { const list = savedList(); list.splice(+dc.dataset.delc, 1); store('rk_saved', list); circuitsModal(); return; }
-    if (e.target.closest('#copyCode')) { const ta = $('#ecode'); ta.select(); try { navigator.clipboard.writeText(ta.value).then(() => toast(t('copied'), 'ok'), () => { document.execCommand('copy'); toast(t('copied'), 'ok'); }); } catch (err) { document.execCommand('copy'); toast(t('copied'), 'ok'); } return; }
+    if (e.target.closest('#copyCode')) { const ta = $('#ecode'); ta.select(); const fb = () => { try { document.execCommand('copy'); } catch (er) {} toast(t('copied'), 'ok'); }; try { navigator.clipboard.writeText(ta.value).then(() => toast(t('copied'), 'ok'), fb); } catch (err) { fb(); } return; }
     if (e.target.closest('#doImport')) {
       try { const d = JSON.parse(decodeURIComponent(escape(atob($('#icode').value.trim())))); if (!Array.isArray(d.parts)) throw 0; loadParts(d.parts); closeModal(); toast(t('loaded'), 'ok'); }
       catch (err) { toast(t('importBad'), 'bad'); }
@@ -1549,11 +2274,12 @@ function bind() {
     audio();
     const g = e.target.closest('.part');
     const part = g && board().parts.find(x => x.id === g.dataset.id);
-    if (S.sim && part && (part.type === 'button' || part.type === 'switch')) {
+    if (S.sim && part && (PRESSABLE[part.type] || TOGGLEABLE[part.type])) {
       e.preventDefault();
-      if (part.type === 'button') { part.props.pressed = true; pressedBtn = part; beep(900, 0.03, 0.03); try { svg.setPointerCapture(e.pointerId); } catch (er) {} }
-      else { part.props.on = !part.props.on; beep(part.props.on ? 900 : 600, 0.04, 0.04); }
-      if (S.sel !== part.id && S.tool === 'select') S.sel = part.id;
+      if (PRESSABLE[part.type]) { part.props.pressed = true; pressedBtn = part; beep(900, 0.03, 0.03); try { svg.setPointerCapture(e.pointerId); } catch (er) {} }
+      else if (part.type === 'switch') { part.props.on = !part.props.on; beep(part.props.on ? 900 : 600, 0.04, 0.04); }
+      else { part.props.pos = part.props.pos ? 0 : 1; beep(800, 0.04, 0.04); }
+      if (S.tool === 'select') S.sel = part.id;
       changed(); return;
     }
     if (S.tool !== 'select') {
@@ -1578,11 +2304,12 @@ function bind() {
 /* ---------------- init ---------------- */
 if (!I18N[S.lang]) S.lang = 'en';
 S.lesson = Math.min(S.lesson, C.LESSONS.length - 1);
-for (const m of ['free', 'learn']) { const b = S.boards[m]; if (!b || !Array.isArray(b.parts)) S.boards[m] = { parts: [] }; }
+for (const m of ['free', 'learn']) { const b = S.boards[m]; if (!b || !Array.isArray(b.parts)) S.boards[m] = { parts: [] }; S.boards[m].parts = S.boards[m].parts.filter(p => C.PINS[p.type] && p.pins.length === C.PINS[p.type]); }
 for (const m of ['free', 'learn']) for (const p of S.boards[m].parts) { const n = +String(p.id).slice(1); if (n >= S.nextId) S.nextId = n + 1; }
 S.celebrated = S.done.includes(C.LESSONS[S.lesson].id);
 buildBoard(); bind(); renderAll();
 if (S.mode === 'learn' && !S.boards.learn.parts.length && C.LESSONS[S.lesson].preset) startLesson(S.lesson);
+window.__rk = { S, simulate, C };
 })();
 </script>
 </body>
